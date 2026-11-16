@@ -65,7 +65,7 @@ class Game{
  update(dt){this.time+=dt;if(this.messageTimer>0){this.messageTimer-=dt;if(this.messageTimer<=0){this.dom('message').style.opacity=0;this.dom('subMessage').style.opacity=0}}
  let p=this.player,e=this.enemy;
  if(this.turn==='player'){let move=(this.keys.KeyW||this.keys.ArrowUp?1:0)-(this.keys.KeyS||this.keys.ArrowDown?1:0)+this.joy.y,steer=(this.keys.KeyD||this.keys.ArrowRight?1:0)-(this.keys.KeyA||this.keys.ArrowLeft?1:0)+this.joy.x;move=clamp(move,-1,1);steer=clamp(steer,-1,1);if(this.settings.invert)move=-move;if(this.moveLeft<=0)move=0;let before=[p.x,p.z];p.update(dt,move,steer,this.world);this.moveLeft=Math.max(0,this.moveLeft-Math.hypot(p.x-before[0],p.z-before[1]));}else{p.updateHeight(dt,this.world)}e.updateHeight(dt,this.world);
- if(this.turn==='enemy'){this.aiTimer-=dt;if(this.aiTimer<=0)this.decideEnemy()}
+ if(this.turn==='enemy'){let desired=Math.atan2(p.x-e.x,p.z-e.z),difference=Math.atan2(Math.sin(desired-e.yaw),Math.cos(desired-e.yaw));let steer=clamp(difference*1.4,-1,1);if(this.aiTimer>.42)e.update(dt,.68,steer,this.world);this.aiTimer-=dt;if(this.aiTimer<=0)this.decideEnemy()}
  if(this.projectiles.length){this.stepAcc+=dt;let ticks=0;while(this.stepAcc>=1/60&&ticks++<6){this.stepProjectiles(1/60);this.stepAcc-=1/60}if(this.projectiles.length===0&&this.turn==='flying')this.resolveTimer=1}
  else if(this.turn==='flying'&&this.resolveTimer<0)this.resolveTimer=.8;
  if(this.turn==='flying'&&this.resolveTimer>=0){this.resolveTimer-=dt;if(this.resolveTimer<=0)this.afterVolley()}
