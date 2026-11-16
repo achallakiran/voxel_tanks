@@ -1,0 +1,14 @@
+{
+  "name": "voxel-tanks",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Standalone 3D voxel artillery game",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node tests/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
