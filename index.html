@@ -246,7 +246,7 @@ class VoxelWorld {
 'use strict';
 function transformPoint(m,p){return [m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12],m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13],m[2]*p[0]+m[6]*p[1]+m[10]*p[2]+m[14]]}
 class Tank{
- constructor(x,z,world,enemy=false){this.x=x;this.z=z;this.y=world.height(x,z)+.18;this.yaw=enemy?Math.PI+2.4:-.45;this.turret=0;this.elev=.62;this.power=43;this.hp=100;this.score=0;this.enemy=enemy;this.color=enemy?[.65,.34,.27]:[.31,.55,.43];this.velocity=0;this.roll=0;this.pitch=0;this.trackPhase=0;this.recoil=0;this.damageGlow=0;this.lastHeading=this.yaw;}
+ constructor(x,z,world,enemy=false){this.x=x;this.z=z;this.y=world.height(x,z)+.18;this.yaw=enemy?-2.1:1.04;this.turret=0;this.elev=.62;this.power=43;this.hp=100;this.score=0;this.enemy=enemy;this.color=enemy?[.65,.34,.27]:[.31,.55,.43];this.velocity=0;this.roll=0;this.pitch=0;this.trackPhase=0;this.recoil=0;this.damageGlow=0;this.lastHeading=this.yaw;}
  base(){return M4.mul(M4.mul(M4.mul(M4.t(this.x,this.y,this.z),M4.ry(this.yaw)),M4.rz(this.roll)),M4.rx(this.pitch))}
  position(){return [this.x,this.y+1.25,this.z]}
  aimYaw(){return this.yaw+this.turret}
@@ -353,7 +353,7 @@ class Game{
  update(dt){this.time+=dt;if(this.messageTimer>0){this.messageTimer-=dt;if(this.messageTimer<=0){this.dom('message').style.opacity=0;this.dom('subMessage').style.opacity=0}}
  let p=this.player,e=this.enemy;
  if(this.turn==='player'){let move=(this.keys.KeyW||this.keys.ArrowUp?1:0)-(this.keys.KeyS||this.keys.ArrowDown?1:0)+this.joy.y,steer=(this.keys.KeyD||this.keys.ArrowRight?1:0)-(this.keys.KeyA||this.keys.ArrowLeft?1:0)+this.joy.x;move=clamp(move,-1,1);steer=clamp(steer,-1,1);if(this.settings.invert)move=-move;if(this.moveLeft<=0)move=0;let before=[p.x,p.z];p.update(dt,move,steer,this.world);this.moveLeft=Math.max(0,this.moveLeft-Math.hypot(p.x-before[0],p.z-before[1]));}else{p.updateHeight(dt,this.world)}e.updateHeight(dt,this.world);
- if(this.turn==='enemy'){this.aiTimer-=dt;if(this.aiTimer<=0)this.decideEnemy()}
+ if(this.turn==='enemy'){let desired=Math.atan2(p.x-e.x,p.z-e.z),difference=Math.atan2(Math.sin(desired-e.yaw),Math.cos(desired-e.yaw));let steer=clamp(difference*1.4,-1,1);if(this.aiTimer>.42)e.update(dt,.68,steer,this.world);this.aiTimer-=dt;if(this.aiTimer<=0)this.decideEnemy()}
  if(this.projectiles.length){this.stepAcc+=dt;let ticks=0;while(this.stepAcc>=1/60&&ticks++<6){this.stepProjectiles(1/60);this.stepAcc-=1/60}if(this.projectiles.length===0&&this.turn==='flying')this.resolveTimer=1}
  else if(this.turn==='flying'&&this.resolveTimer<0)this.resolveTimer=.8;
  if(this.turn==='flying'&&this.resolveTimer>=0){this.resolveTimer-=dt;if(this.resolveTimer<=0)this.afterVolley()}
