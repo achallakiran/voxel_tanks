@@ -1,7 +1,7 @@
 'use strict';
 function transformPoint(m,p){return [m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12],m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13],m[2]*p[0]+m[6]*p[1]+m[10]*p[2]+m[14]]}
 class Tank{
- constructor(x,z,world,enemy=false){this.x=x;this.z=z;this.y=world.height(x,z)+.18;this.yaw=enemy?Math.PI+2.4:-.45;this.turret=0;this.elev=.62;this.power=43;this.hp=100;this.score=0;this.enemy=enemy;this.color=enemy?[.65,.34,.27]:[.31,.55,.43];this.velocity=0;this.roll=0;this.pitch=0;this.trackPhase=0;this.recoil=0;this.damageGlow=0;this.lastHeading=this.yaw;}
+ constructor(x,z,world,enemy=false){this.x=x;this.z=z;this.y=world.height(x,z)+.18;this.yaw=enemy?-2.1:1.04;this.turret=0;this.elev=.62;this.power=43;this.hp=100;this.score=0;this.enemy=enemy;this.color=enemy?[.65,.34,.27]:[.31,.55,.43];this.velocity=0;this.roll=0;this.pitch=0;this.trackPhase=0;this.recoil=0;this.damageGlow=0;this.lastHeading=this.yaw;}
  base(){return M4.mul(M4.mul(M4.mul(M4.t(this.x,this.y,this.z),M4.ry(this.yaw)),M4.rz(this.roll)),M4.rx(this.pitch))}
  position(){return [this.x,this.y+1.25,this.z]}
  aimYaw(){return this.yaw+this.turret}
