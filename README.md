@@ -39,23 +39,23 @@ Mobile play is designed for landscape orientation.
 
 Requires Node.js >=18; **no npm installation or dependencies**.
 
-\`\`\`bash
+```bash
 npm run build
 npm test
-\`\`\`
+```
 
-- \`src/renderer.js\`: dependency-free WebGL2 graphics and primitives
-- \`src/world.js\`: volumetric editable voxel world and chunk meshes
-- \`src/tanks.js\`: procedural tanks, movement and animations
-- \`src/game.js\`: weapons, ballistics, enemy AI, sound, input and turns
-- \`src/style.css\`, \`src/shell.html\`: responsive UI
-- \`scripts/build.mjs\`: deterministic standalone builder
-- \`tests/smoke.mjs\`: source/bundle/terrain/AI tests
-- \`index.html\`: committed, generated GitHub Pages entry point and offline build
+- `src/renderer.js`: dependency-free WebGL2 graphics and primitives
+- `src/world.js`: volumetric editable voxel world and chunk meshes
+- `src/tanks.js`: procedural tanks, movement and animations
+- `src/game.js`: weapons, ballistics, enemy AI, sound, input and turns
+- `src/style.css`, `src/shell.html`: responsive UI
+- `scripts/build.mjs`: deterministic standalone builder
+- `tests/smoke.mjs`: source/bundle/terrain/AI tests
+- `index.html`: committed, generated GitHub Pages entry point and offline build
 
 ### GitHub Pages configuration
 
-In **Settings → Pages**, select **Deploy from a branch**, choose **main** and **/(root)**. GitHub Pages then serves the root \`index.html\`.
+In **Settings → Pages**, select **Deploy from a branch**, choose **main** and **/(root)**. GitHub Pages then serves the root `index.html`.
 
 ## Planned, not yet built
 
