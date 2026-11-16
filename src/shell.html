@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0d2833">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>VOXEL TANKS — Artillery Unleashed</title>
+<style>
+/*INLINE_CSS*/
+</style>
+</head>
+<body>
+<canvas id="viewport" aria-label="3D voxel artillery battlefield"></canvas>
+<div id="veil" aria-hidden="true"></div>
+<div id="menu">
+  <main class="hero">
+    <div class="brand"><span class="brandMark">A</span> ADA STUDIOS <span style="color:#9fbab0">/ ARTILLERY SERIES</span></div>
+    <h1>VOXEL <em>TANKS</em></h1>
+    <p class="tagline">Aim higher. Break mountains. Build new ground. A fully three-dimensional artillery battle where every shot changes the world.</p>
+    <div class="menuButtons">
+      <button class="btn main" id="startDuel">▶ &nbsp; START BATTLE</button>
+      <button class="btn" id="startSandbox">▦ &nbsp; SANDBOX</button>
+      <button class="btn" id="menuSettings" aria-label="Settings">⚙ &nbsp; SETTINGS</button>
+    </div>
+    <div class="tips">
+      <b>FIRST PLAYABLE ALPHA</b> &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; AI opponent &nbsp;•&nbsp; Editable 3D terrain
+      <div style="margin-top:6px">Move: W A S D / arrows / touch joystick &nbsp; • &nbsp; Drag to orbit camera &nbsp; • &nbsp; Adjust angle, bearing and power &nbsp; • &nbsp; Space to fire</div>
+      <div style="margin-top:7px;color:#ffd577">Build hills with ▥ &nbsp;•&nbsp; Tunnel through terrain with ⛏ &nbsp;•&nbsp; Watch your opponent adapt.</div>
+    </div>
+    <div id="errorMessage" style="display:none;background:#6e2121;color:white;margin-top:20px;border-radius:8px;padding:12px"></div>
+  </main>
+</div>
+<div id="hud">
+  <div class="hudTop">
+    <div class="stat">
+      <div class="name">◉ YOU &nbsp; <span id="youScore">0</span> PTS</div>
+      <div class="val"><span id="youHp">100</span><span style="font-size:10px;color:#b3d7c0"> HP</span></div>
+      <div class="health"><b id="youHealth"></b></div>
+    </div>
+    <div class="centerTop"><span id="round">ROUND 1/10</span><small id="wind">WIND · 0.0</small></div>
+    <div class="stat enemyStat">
+      <div class="name">ENEMY &nbsp; <span id="enemyScore">0</span> PTS ◉</div>
+      <div class="val"><span id="enemyHp">100</span><span style="font-size:10px;color:#ffd1be"> HP</span></div>
+      <div class="health"><b id="enemyHealth"></b></div>
+    </div>
+    <div class="actionsTop">
+      <button class="iconButton" id="cameraButton" title="Switch camera (C)" aria-label="Switch camera">◉</button>
+      <button class="iconButton" id="settingsButton" title="Settings" aria-label="Settings">⚙</button>
+      <button class="iconButton" id="pauseButton" title="Pause" aria-label="Pause">Ⅱ</button>
+    </div>
+  </div>
+  <canvas id="radar" width="128" height="128"></canvas>
+  <div id="help">DRIVE TO REPOSITION &nbsp;•&nbsp; <span id="moveLeft">22</span>m MOVEMENT LEFT &nbsp;•&nbsp; AIM &amp; FIRE</div>
+  <div id="message" aria-live="polite"></div><div id="subMessage"></div>
+  <div id="joyBase" aria-label="Movement joystick"><div id="joyKnob"></div></div>
+  <div id="bottom">
+    <div class="aimPanel">
+      <div class="aimPair"><label for="bearing">AZIMUTH</label><input id="bearing" type="range" min="-180" max="180" step="1" value="0" aria-label="Turret bearing"><output id="bearingValue">0°</output></div>
+      <div class="aimPair"><label for="angle">ANGLE</label><input id="angle" type="range" min="8" max="82" step="1" value="36" aria-label="Elevation angle"><output id="angleValue">36°</output></div>
+      <div class="aimPair"><label for="power">POWER</label><input id="power" type="range" min="22" max="75" step="1" value="43" aria-label="Shot power"><output id="powerValue">43%</output></div>
+    </div>
+    <div class="weaponPanel">
+      <div class="weaponHead"><span>ARSENAL</span><span id="weaponLabel">CANNON</span></div>
+      <div class="weaponChoices" id="weapons"></div>
+    </div>
+    <button class="fireButton" id="fire" aria-label="Fire artillery shell">FIRE</button>
+  </div>
+  <div id="turnNotice">
+    <div><h2 id="turnTitle">VICTORY</h2><p id="turnDetails"></p><button class="btn main" id="turnAction">▶ PLAY AGAIN</button></div>
+  </div>
+</div>
+<div id="panel">
+  <div class="modal">
+    <h2>⚙ SETTINGS & PAUSE</h2>
+    <p>Game settings apply immediately. Audio is synthesized locally and works offline.</p>
+    <label>Graphics quality
+      <select id="quality"><option value=".65">Battery saver</option><option value=".85">Balanced</option><option value="1" selected>High</option></select>
+    </label>
+    <label>Enemy difficulty
+      <select id="difficulty"><option value="easy">Recruit</option><option value="normal" selected>Captain</option><option value="hard">Veteran</option><option value="expert">Commander</option></select>
+    </label>
+    <label>Sound level <input id="volume" type="range" min="0" max="1" value=".45" step=".05" aria-label="Volume"></label>
+    <label>Invert driving up/down <input id="invert" type="checkbox"></label>
+    <p><b>Controls</b>: W/A/S/D or arrow keys to drive, drag to orbit the camera, mouse wheel to zoom, C to switch camera, 1–6 to choose weapons, space to fire.</p>
+    <div class="modalButtons">
+      <button class="btn main" id="closePanel">▶ RESUME / CLOSE</button>
+      <button class="btn" id="restartButton">↻ RESTART</button>
+      <button class="btn" id="quitButton">⌂ MENU</button>
+    </div>
+  </div>
+</div>
+<div id="rotate"><div><span>▣</span>ROTATE YOUR DEVICE<br><small style="color:#a3c7be;font-weight:500">VOXEL TANKS plays best in landscape.</small></div></div>
+<div id="toast" aria-live="polite"></div>
+<script>
+/*INLINE_JS*/
+</script>
+</body>
+</html>
