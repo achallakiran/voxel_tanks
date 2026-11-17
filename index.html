@@ -583,7 +583,7 @@ Game.prototype.refreshMoveUi=function(){
  if(!this.dom('moveControls'))return;
  let active=this.mode==='duel'&&this.turn==='player'&&!this.paused;
  this.dom('hud').classList.toggle('classicMove',this.mode==='duel');
- this.dom('moveCredits').textContent=this.moveCredits??6;
+ this.dom('moveCredits').textContent=(this.moveCredits??6)+(this.movePlan?' (−'+this.movePlan.cost+')':'');
  this.dom('moveToggle').disabled=!active||!!this.movingPath||this.moveCredits<=0;
  this.dom('moveToggle').style.background=this.moveMode?'rgba(245,196,104,.28)':'rgba(8,28,37,.82)';
  this.dom('moveConfirm').disabled=!active||!this.movePlan||this.movePlan.cost>this.moveCredits||!!this.movingPath;
@@ -593,7 +593,9 @@ Game.prototype.refreshMoveUi=function(){
 };
 const OLD_START=Game.prototype.start;
 Game.prototype.start=function(mode){
+ if(this.world&&this.world.chunks)for(let mesh of this.world.chunks.values())this.r.dispose(mesh);
  OLD_START.call(this,mode);
+ this.player._game=this;this.enemy._game=this;
  this.navigator=new SurfaceNavigator(this.world);this.perception=new EnemyPerception();this.shellCamera=new ShellCamera();this.cinematics=new WeaponCinematics(this);
  this.moveCredits=MOVE_RULES.credits;this.enemyCredits=MOVE_RULES.credits;this.moveLeft=mode==='duel'?this.moveCredits:22;
  this.moveMode=mode==='duel';this.movePlan=null;this.movingPath=null;this.enemyPath=null;this.aiMoved=false;this.lastCamera=null;
@@ -610,7 +612,7 @@ Game.prototype.launch=function(t,w){
  if(this.perception&&t===this.player&&this.mode==='duel')this.perception.hearFire(this.world,this.enemy,this.player,this.time);
 };
 const OLD_IMPACT=Game.prototype.impact;
-Game.prototype.impact=function(p,pos){OLD_IMPACT.call(this,p,pos);if(this.shellCamera)this.shellCamera.onImpact(pos,p.w.radius);if(this.cinematics)this.cinematics.impact(p,pos);};
+Game.prototype.impact=function(p,pos){this.lastTerrainImpact={owner:p.owner,pos:[...pos],radius:p.w.radius,time:this.time};OLD_IMPACT.call(this,p,pos);if(this.shellCamera)this.shellCamera.onImpact(pos,p.w.radius);if(this.cinematics)this.cinematics.impact(p,pos);};
 const OLD_DAMAGE=Game.prototype.damage;
 Game.prototype.damage=function(center,radius,damage,owner){
  let hp=owner?owner.hp:0;OLD_DAMAGE.call(this,center,radius,damage,owner);
@@ -693,7 +695,7 @@ Tank.prototype.updateHeight=function(dt,world){
  if(this.y>ground+.06){
   if(this.fallStart===undefined)this.fallStart=this.y;
   this.verticalSpeed=(this.verticalSpeed||0)-22*dt;this.y+=this.verticalSpeed*dt;
-  if(this.y<=ground){this.y=ground;let drop=this.fallStart-ground;if(drop>4.5)this.applyDamage(Math.min(80,(drop-4.5)*5));this.verticalSpeed=0;this.fallStart=undefined;}
+  if(this.y<=ground){this.y=ground;let drop=this.fallStart-ground;if(drop>4.5){let dealt=this.applyDamage(Math.min(80,(drop-4.5)*5)),g=this._game,impact=g&&g.lastTerrainImpact;if(impact&&g.time-impact.time<8&&Math.hypot(this.x-impact.pos[0],this.z-impact.pos[2])<impact.radius+6){if(impact.owner===this)this.score-=Math.round(dealt*1.5);else if(impact.owner)impact.owner.score+=Math.round(dealt*1.5);g.ui();}}this.verticalSpeed=0;this.fallStart=undefined;}
  }else{this.y=lerp(this.y,ground,1-Math.exp(-8*dt));this.verticalSpeed=0;this.fallStart=undefined;}
  let fx=Math.sin(this.yaw)*2,fz=Math.cos(this.yaw)*2,sx=Math.cos(this.yaw),sz=-Math.sin(this.yaw),h=this.y+1.2;
  let fore=nav.floor(this.x+fx,this.z+fz,h)??ground,back=nav.floor(this.x-fx,this.z-fz,h)??ground;
