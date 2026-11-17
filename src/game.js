@@ -138,7 +138,7 @@ ui(){
  else{let a=p.yaw+this.orbit,dist=(this.cam==='orbit'?23:15)*this.zoom,side=this.cam==='orbit'?3:2;target=[p.x,p.y+2.3,p.z];eye=[p.x-Math.sin(a)*dist+Math.cos(a)*side,p.y+7.8*this.zoom,p.z-Math.cos(a)*dist-Math.sin(a)*side]}
  this.cameraPos=this.cameraPos.map((x,i)=>lerp(x,eye[i],this.mode==='menu'?.045:.13));this.cameraTarget=this.cameraTarget.map((x,i)=>lerp(x,target[i],.16));let sh=this.shake;return [this.cameraPos.map(x=>x+(Math.random()-.5)*sh),this.cameraTarget]}
  draw(time){let [eye,target]=this.camera();this.r.begin(eye,target,this.time);this.world.draw(this.time,eye);this.player.render(this.r,this.time);this.enemy.render(this.r,this.time);
- if(this.turn==='player'&&this.mode!=='menu')for(let [i,pt] of this.predict().entries()){let s=i%2===0?.19:.14;this.r.cube(pt,[s,s,s],[1,.84,.36])}
+ if(this.turn==='player'&&this.mode==='duel'&&this.renderAimTrajectory)this.renderAimTrajectory();
  for(let p of this.projectiles){let co=p.w.col;for(let i=0;i<p.trail.length;i++){let q=p.trail[i],s=.21*(1-i/p.trail.length)+.04;this.r.cube(q,[s,s,s],co)}let s=p.w.id==='mega'?.63:p.w.id==='roller'?.66:.39;this.r.cube(p.pos,[s,s,s],co);this.r.cube(p.pos,[s*.35,s*.35,s*.35],[1,1,.8])}
  for(let p of this.fx){let alpha=clamp(p.life/1.4,.08,.9),s=p.size*clamp(p.life,0,1.2);this.r.cube(p.pos,[s,s,s],p.color,null,alpha)}
  this.drawRadar()}
