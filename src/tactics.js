@@ -149,25 +149,7 @@ class WeaponCinematics{
  }
 }
 // Preserve underlying engine and override only the coordinated v0.2 experience.
-const OLD_BIND=Game.prototype.bind;
-Game.prototype.bind=function(){
- OLD_BIND.call(this);
- this.dom('hud').insertAdjacentHTML('beforeend','<div id="moveControls"><button id="moveToggle" class="iconButton" title="Plan movement" aria-label="Plan movement">↗</button><b id="moveCredits">6</b><button id="moveConfirm" class="iconButton" title="Confirm move" aria-label="Confirm move">✓</button><button id="moveCancel" class="iconButton" title="Cancel route" aria-label="Cancel route">×</button></div>');
- this.dom('cameraButton').onclick=()=>{this.cam=this.cam==='chase'?'orbit':'chase';this.audio.select();this.toast('CAMERA • '+this.cam.toUpperCase());};
- this.dom('moveToggle').onclick=()=>{this.moveMode=!this.moveMode;this.movePlan=null;this.refreshMoveUi();};
- this.dom('moveConfirm').onclick=()=>this.confirmMove();
- this.dom('moveCancel').onclick=()=>{this.movePlan=null;this.refreshMoveUi();};
- let down=null;
- this.canvas.addEventListener('pointerdown',e=>down={id:e.pointerId,x:e.clientX,y:e.clientY});
- this.canvas.addEventListener('pointerup',e=>{
-  if(!down||down.id!==e.pointerId)return;
-  let distance=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
-  if(distance>9||!this.moveMode||this.mode!=='duel'||this.turn!=='player'||this.movingPath||this.paused)return;
-  let ground=this.pickGround(e.clientX,e.clientY);
-  if(ground)this.previewMove(ground[0],ground[2]);else this.toast('SELECT VISIBLE TERRAIN');
- });
- this.dom('radar').style.display='none';
-};
+// v0.3 uses the base game's input binding plus the direct tank-selection controller.
 Game.prototype.pickGround=function(px,py){
  if(!this.lastCamera)return null;
  let [eye,target]=this.lastCamera,forward=V3.norm(V3.sub(target,eye)),right=V3.norm(V3.cross(forward,[0,1,0])),up=V3.norm(V3.cross(right,forward)),rect=this.canvas.getBoundingClientRect();
@@ -191,16 +173,9 @@ Game.prototype.confirmMove=function(){
  this.movingPath={points:plan.points,next:1};this.movePlan=null;this.audio.select();this.refreshMoveUi();
 };
 Game.prototype.refreshMoveUi=function(){
- if(!this.dom('moveControls'))return;
  let active=this.mode==='duel'&&this.turn==='player'&&!this.paused;
- this.dom('hud').classList.toggle('classicMove',this.mode==='duel');
- this.dom('moveCredits').textContent=(this.moveCredits??6)+(this.movePlan?' (−'+this.movePlan.cost+')':'');
- this.dom('moveToggle').disabled=!active||!!this.movingPath||this.moveCredits<=0;
- this.dom('moveToggle').style.background=this.moveMode?'rgba(245,196,104,.28)':'rgba(8,28,37,.82)';
- this.dom('moveConfirm').disabled=!active||!this.movePlan||this.movePlan.cost>this.moveCredits||!!this.movingPath;
- this.dom('moveCancel').disabled=!active||!this.movePlan;
- this.dom('moveLeft').textContent=this.mode==='duel'?this.moveCredits:Math.ceil(this.moveLeft);
- this.dom('fire').disabled=!active||!!this.movingPath;
+ if(this.dom('moveLeft'))this.dom('moveLeft').textContent=this.moveCredits??6;
+ if(this.dom('fire'))this.dom('fire').disabled=!active||!!this.movingPath;
 };
 const OLD_START=Game.prototype.start;
 Game.prototype.start=function(mode){
@@ -210,8 +185,8 @@ Game.prototype.start=function(mode){
  this.navigator=new SurfaceNavigator(this.world);this.perception=new EnemyPerception();this.shellCamera=new ShellCamera();this.cinematics=new WeaponCinematics(this);
  this.moveCredits=MOVE_RULES.credits;this.enemyCredits=MOVE_RULES.credits;this.moveLeft=mode==='duel'?this.moveCredits:22;
  this.moveMode=mode==='duel';this.movePlan=null;this.movingPath=null;this.enemyPath=null;this.aiMoved=false;this.lastCamera=null;
- this.dom('radar').style.display='none';this.refreshMoveUi();
- this.banner(mode==='duel'?'DISCOVER • AIM • FIRE':'TERRAIN SANDBOX',mode==='duel'?'TAP GROUND TO PLAN • SIX MOVES PER MATCH':'DRIVE FREELY • AIM • FIRE',2.4);
+ this.refreshMoveUi();
+ this.banner('DISCOVER • AIM • FIRE','SIX MOVES PER MATCH',2.2);
 };
 const OLD_UI=Game.prototype.ui;
 Game.prototype.ui=function(){OLD_UI.call(this);if(this.moveCredits!==undefined&&this.mode==='duel')this.dom('moveLeft').textContent=this.moveCredits;};
@@ -239,7 +214,7 @@ Game.prototype.decideEnemy=function(){
  if(!this.aiMoved){
   this.aiMoved=true;
   if(this.enemyCredits>0&&Math.random()<.53){
-   const tx=clamp(e.x+(Math.random()-.5)*12,-48,48),tz=clamp(e.z+(Math.random()-.5)*12,-48,48),path=this.navigator.plan(e,tx,tz);
+   const tx=clamp(e.x+(Math.random()-.5)*5,-48,48),tz=clamp(e.z+(Math.random()-.5)*5,-48,48),path=this.navigator.plan(e,tx,tz);
    if(path&&path.cost>0&&path.cost<=Math.min(2,this.enemyCredits)){this.enemyCredits-=path.cost;this.enemyPath={points:path.points,next:1};return;}
   }
  }
