@@ -369,7 +369,7 @@ Game.prototype.predict=function(){
 Game.prototype.renderAimTrajectory=function(){
  if(this.turn!=='player'||this.mode!=='duel'||this.paused||this.movingPath)return;
  const points=this.predict();if(points.length<2)return;
- const r=this.r,count=Math.min(points.length-1,38);
+ const r=this.r,count=points.length-1; // render the entire preview, up to ~55% of the simulated trajectory
  for(let i=1;i<=count;i++){
   const p=points[i-1],q=points[i],d=V3.sub(q,p),length=V3.len(d);
   if(length<.001)continue;
