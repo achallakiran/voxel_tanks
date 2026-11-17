@@ -21,51 +21,45 @@
     <p class="tagline">Aim higher. Break mountains. Build new ground. A fully three-dimensional artillery battle where every shot changes the world.</p>
     <div class="menuButtons">
       <button class="btn main" id="startDuel">▶ &nbsp; START BATTLE</button>
-      <button class="btn" id="startSandbox">▦ &nbsp; SANDBOX</button>
-      <button class="btn" id="menuSettings" aria-label="Settings">⚙ &nbsp; SETTINGS</button>
     </div>
     <div class="tips">
-      <b>FIRST PLAYABLE ALPHA</b> &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; AI opponent &nbsp;•&nbsp; Editable 3D terrain
-      <div style="margin-top:6px">Move: W A S D / arrows / touch joystick &nbsp; • &nbsp; Drag to orbit camera &nbsp; • &nbsp; Adjust angle, bearing and power &nbsp; • &nbsp; Space to fire</div>
-      <div style="margin-top:7px;color:#ffd577">Build hills with ▥ &nbsp;•&nbsp; Tunnel through terrain with ⛏ &nbsp;•&nbsp; Watch your opponent adapt.</div>
+      <b>TACTICAL ARTILLERY</b> &nbsp;•&nbsp; Six moves per tank &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; Deformable terrain
+      <div style="margin-top:6px">Drag the camera to aim the barrel; raise and lower the view to change firing elevation. Adjust power on the right before firing.</div>
+      <div style="margin-top:7px;color:#ffd577">Tap your tank to select it, then tap nearby reachable ground to move. Tap the tank again to deselect. Each movement action costs one of six moves.</div>
     </div>
     <div id="errorMessage" style="display:none;background:#6e2121;color:white;margin-top:20px;border-radius:8px;padding:12px"></div>
   </main>
 </div>
 <div id="hud">
   <div class="hudTop">
-    <div class="stat">
-      <div class="name">◉ YOU &nbsp; <span id="youScore">0</span> PTS</div>
-      <div class="val"><span id="youHp">100</span><span style="font-size:10px;color:#b3d7c0"> HP</span></div>
-      <div class="health"><b id="youHealth"></b></div>
-    </div>
+    <div class="movesPill" title="Six movement actions per match"><span class="movesGlyph">◈</span><div id="moveTokens"></div></div>
     <div class="centerTop"><span id="round">ROUND 1/10</span><small id="wind">WIND · 0.0</small></div>
-    <div class="stat enemyStat">
-      <div class="name">ENEMY &nbsp; <span id="enemyScore">0</span> PTS ◉</div>
-      <div class="val"><span id="enemyHp">100</span><span style="font-size:10px;color:#ffd1be"> HP</span></div>
-      <div class="health"><b id="enemyHealth"></b></div>
-    </div>
     <div class="actionsTop">
-      <button class="iconButton" id="cameraButton" title="Switch camera (C)" aria-label="Switch camera">◉</button>
-      <button class="iconButton" id="settingsButton" title="Settings" aria-label="Settings">⚙</button>
-      <button class="iconButton" id="pauseButton" title="Pause" aria-label="Pause">Ⅱ</button>
+      <button class="iconButton" id="pauseButton" title="Pause, settings and main menu" aria-label="Pause and menu">Ⅱ</button>
     </div>
   </div>
-  <canvas id="radar" width="128" height="128"></canvas>
-  <div id="help">TAP GROUND TO PLAN A MOVE &nbsp;•&nbsp; <span id="moveLeft">6</span> MOVES LEFT &nbsp;•&nbsp; AIM &amp; FIRE</div>
+  <div id="tankHealthLayer" aria-hidden="true">
+    <div class="tankHealthBar playerTankBar" id="playerTankHealth"><div class="tankHealthFill"></div></div>
+    <div class="tankHealthBar enemyTankBar" id="enemyTankHealth"><div class="tankHealthFill"></div></div>
+  </div>
+  <div id="help">TAP YOUR TANK TO MOVE &nbsp;•&nbsp; <span id="moveLeft">6</span> MOVES LEFT</div>
   <div id="message" aria-live="polite"></div><div id="subMessage"></div>
-  <div id="joyBase" aria-label="Movement joystick"><div id="joyKnob"></div></div>
   <div id="bottom">
-    <div class="aimPanel">
-      <div class="aimPair"><label for="bearing">AZIMUTH</label><input id="bearing" type="range" min="-180" max="180" step="1" value="0" aria-label="Turret bearing"><output id="bearingValue">0°</output></div>
-      <div class="aimPair"><label for="angle">ANGLE</label><input id="angle" type="range" min="8" max="82" step="1" value="36" aria-label="Elevation angle"><output id="angleValue">36°</output></div>
-      <div class="aimPair"><label for="power">POWER</label><input id="power" type="range" min="22" max="75" step="1" value="43" aria-label="Shot power"><output id="powerValue">43%</output></div>
-    </div>
-    <div class="weaponPanel">
-      <div class="weaponHead"><span>ARSENAL</span><span id="weaponLabel">CANNON</span></div>
+    <div class="weaponPanel" id="weaponPanel">
+      <button id="weaponToggle" class="weaponToggle" aria-label="Choose weapon" aria-expanded="false" aria-controls="weapons">
+        <canvas id="activeWeaponArt" width="56" height="56" aria-hidden="true"></canvas>
+        <span class="weaponToggleMeta"><span class="weaponToggleHint">WEAPON</span><strong id="weaponLabel">CANNON</strong></span><span class="weaponChevron">⌄</span>
+      </button>
       <div class="weaponChoices" id="weapons"></div>
     </div>
-    <button class="fireButton" id="fire" aria-label="Fire artillery shell">FIRE</button>
+    <div class="rightWeapons">
+      <div class="verticalPower">
+        <output id="powerValue" for="power">43%</output>
+        <input id="power" type="range" min="22" max="75" value="43" step="1" aria-label="Projectile firing power">
+        <span>POWER</span>
+      </div>
+      <button class="fireButton" id="fire" aria-label="Fire artillery shell">FIRE</button>
+    </div>
   </div>
   <div id="turnNotice">
     <div><h2 id="turnTitle">VICTORY</h2><p id="turnDetails"></p><button class="btn main" id="turnAction">▶ PLAY AGAIN</button></div>
@@ -73,7 +67,7 @@
 </div>
 <div id="panel">
   <div class="modal">
-    <h2>⚙ SETTINGS & PAUSE</h2>
+    <h2>Ⅱ PAUSE & SETTINGS</h2>
     <p>Game settings apply immediately. Audio is synthesized locally and works offline.</p>
     <label>Graphics quality
       <select id="quality"><option value=".65">Battery saver</option><option value=".85">Balanced</option><option value="1" selected>High</option></select>
@@ -82,8 +76,8 @@
       <select id="difficulty"><option value="easy">Recruit</option><option value="normal" selected>Captain</option><option value="hard">Veteran</option><option value="expert">Commander</option></select>
     </label>
     <label>Sound level <input id="volume" type="range" min="0" max="1" value=".45" step=".05" aria-label="Volume"></label>
-    <label>Invert driving up/down <input id="invert" type="checkbox"></label>
-    <p><b>Controls</b>: W/A/S/D or arrow keys to drive, drag to orbit the camera, mouse wheel to zoom, C to switch camera, 1–6 to choose weapons, space to fire.</p>
+    
+    <p><b>Controls:</b> Drag to aim left/right and up/down. Use the vertical power slider to set firing strength. Tap your tank to select/deselect it, then tap reachable terrain to move. Press Pause for settings, restart or the main menu.</p>
     <div class="modalButtons">
       <button class="btn main" id="closePanel">▶ RESUME / CLOSE</button>
       <button class="btn" id="restartButton">↻ RESTART</button>
