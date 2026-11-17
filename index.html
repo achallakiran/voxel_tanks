@@ -82,6 +82,45 @@ h1 em{display:block;color:var(--gold);font-style:normal}
 @media(max-width:720px){#moveControls{bottom:104px;left:12px;padding:4px;gap:4px}#moveControls .iconButton{min-width:31px;min-height:31px;font-size:17px}#moveControls b{font-size:15px}}
 @media(max-height:370px){#moveControls{bottom:83px}}
 
+/* v0.3: single-pause tactical HUD, visual dropdown, right-side vertical power. */
+#hud .hudTop{top:max(9px,env(safe-area-inset-top));left:max(13px,env(safe-area-inset-left));right:max(13px,env(safe-area-inset-right));align-items:center;pointer-events:none}
+#hud .hudTop>*{pointer-events:auto}
+#hud #bottom{display:flex;justify-content:space-between;align-items:flex-end;left:max(14px,env(safe-area-inset-left));right:max(14px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));gap:12px;pointer-events:none}
+#hud #bottom>*{pointer-events:auto}
+.movesPill{background:rgba(8,26,33,.79);border:1px solid rgba(240,217,143,.22);border-radius:11px;display:flex;gap:10px;align-items:center;padding:9px 11px;backdrop-filter:blur(12px)}
+.movesGlyph{color:#f4ce82;font-weight:900;font-size:17px}
+#moveTokens{display:flex;align-items:center;gap:5px}
+#moveTokens span{display:block;width:11px;height:11px;border:1px solid rgba(242,221,160,.48);border-radius:2px;transform:rotate(45deg)}
+#moveTokens span.ready{background:linear-gradient(145deg,#ffe7a5,#e6aa59);box-shadow:0 0 8px rgba(245,198,106,.30)}
+#moveTokens span.spent{background:rgba(188,208,191,.12);border-color:rgba(188,208,191,.18)}
+#weaponPanel{position:relative;display:block;width:205px;max-width:45vw;min-width:0;flex:0 0 auto;padding:0;border:0;background:none;box-shadow:none;overflow:visible}
+.weaponToggle{display:flex;gap:9px;align-items:center;width:100%;min-height:68px;background:rgba(9,26,33,.9);border:1px solid rgba(255,221,140,.45);border-radius:12px;backdrop-filter:blur(13px);color:var(--ink);padding:7px 8px;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.weaponToggle canvas{display:block;width:50px;height:50px;object-fit:contain;flex:0 0 50px;border:1px solid rgba(255,220,151,.19);border-radius:8px;background:linear-gradient(145deg,rgba(138,156,143,.23),rgba(26,49,50,.65))}
+.weaponToggleMeta{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;min-width:0;flex:1}
+.weaponToggleHint{color:#9eb9ad;font-size:8px;font-weight:900;letter-spacing:.11em}
+.weaponToggleMeta strong{font-size:12px;font-weight:900;letter-spacing:.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.weaponChevron{font-size:22px;color:var(--gold)}
+#weaponPanel .weaponChoices{position:absolute;bottom:calc(100% + 9px);left:0;display:none;width:max(236px,100%);max-width:min(400px,90vw);padding:10px;background:rgba(8,25,32,.96);border:1px solid rgba(254,220,153,.4);border-radius:14px;box-shadow:0 15px 35px #0009;backdrop-filter:blur(15px);grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;z-index:6;overflow:visible}
+#weaponPanel.expanded .weaponChoices{display:grid}
+#weaponPanel .weaponPick{min-width:0;flex:none;width:100%;height:76px;background:linear-gradient(145deg,rgba(71,99,94,.4),rgba(17,35,41,.9));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:1px solid rgba(207,230,212,.18);border-radius:10px;padding:3px}
+#weaponPanel .weaponPick canvas{width:52px;height:52px;max-width:100%}
+#weaponPanel .weaponPick .weaponName{font-size:9px;color:#dce6d9;font-weight:800;line-height:1}
+#weaponPanel .weaponPick.selected{border:2px solid #ffc66d;background:linear-gradient(145deg,rgba(172,112,40,.3),rgba(35,47,48,.94))}
+.rightWeapons{display:flex;align-items:flex-end;gap:10px}
+.verticalPower{position:relative;display:flex;align-items:center;flex-direction:column;justify-content:space-between;width:56px;height:180px;padding:8px 0 7px;border:1px solid rgba(254,218,142,.35);border-radius:12px;background:rgba(7,27,35,.83);backdrop-filter:blur(12px)}
+.verticalPower output{font-variant-numeric:tabular-nums;font-size:11px;color:#ffe0a0;font-weight:1000}
+.verticalPower>span{font-weight:900;letter-spacing:.05em;color:#c0d1c3;font-size:9px}
+.verticalPower input[type=range]{position:absolute;width:130px;height:28px;top:77px;left:-37px;transform:rotate(-90deg);margin:0;accent-color:#ffca78;cursor:pointer;touch-action:none}
+#hud .fireButton{min-width:86px;height:77px;border-radius:15px;font-size:19px}
+#hud #help{max-width:60vw;left:50%;top:max(69px,calc(env(safe-area-inset-top) + 62px));white-space:normal}
+#hud #radar,#hud #joyBase,#hud #moveControls{display:none!important}
+#tankHealthLayer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.tankHealthBar{position:absolute;left:-100px;top:-100px;transform:translate(-50%,-50%);width:76px;height:9px;border-radius:8px;border:2px solid rgba(8,21,26,.82);background:rgba(24,35,32,.85);box-shadow:0 1px 7px #06141cc4;opacity:0;transition:opacity .15s linear}
+.tankHealthFill{height:100%;width:100%;border-radius:4px;background:linear-gradient(90deg,#51b779,#a9e5a9);transition:width .25s ease}
+.enemyTankBar .tankHealthFill{background:linear-gradient(90deg,#d75a44,#eaaa68)}
+@media(max-width:720px){.movesPill{padding:6px 8px;gap:7px}#moveTokens{gap:4px}#moveTokens span{width:9px;height:9px}#weaponPanel{width:148px}.weaponToggle{gap:5px;min-height:56px;padding:4px 5px}.weaponToggle canvas{width:39px;height:39px;flex-basis:39px}.weaponToggleMeta strong{font-size:10px}.weaponToggleHint{font-size:7px}.weaponChevron{font-size:17px}#weaponPanel .weaponChoices{width:229px;padding:7px;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}#weaponPanel .weaponPick{height:65px}#weaponPanel .weaponPick canvas{width:44px;height:44px}#weaponPanel .weaponPick .weaponName{font-size:8px}.verticalPower{width:44px;height:153px}.verticalPower input[type=range]{width:103px;height:25px;top:66px;left:-30px}.verticalPower output{font-size:10px}.verticalPower>span{font-size:7px}.rightWeapons{gap:6px}#hud .fireButton{min-width:73px;height:69px;font-size:16px}#hud #bottom{gap:6px}.tankHealthBar{width:64px;height:8px}}
+@media(max-height:370px){.verticalPower{height:137px}.verticalPower input[type=range]{width:91px;top:61px;left:-24px}#hud .fireButton{height:62px}#hud #bottom{bottom:4px}#weaponPanel .weaponChoices{bottom:calc(100% + 3px)}}
+
 </style>
 </head>
 <body>
@@ -94,51 +133,45 @@ h1 em{display:block;color:var(--gold);font-style:normal}
     <p class="tagline">Aim higher. Break mountains. Build new ground. A fully three-dimensional artillery battle where every shot changes the world.</p>
     <div class="menuButtons">
       <button class="btn main" id="startDuel">▶ &nbsp; START BATTLE</button>
-      <button class="btn" id="startSandbox">▦ &nbsp; SANDBOX</button>
-      <button class="btn" id="menuSettings" aria-label="Settings">⚙ &nbsp; SETTINGS</button>
     </div>
     <div class="tips">
-      <b>FIRST PLAYABLE ALPHA</b> &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; AI opponent &nbsp;•&nbsp; Editable 3D terrain
-      <div style="margin-top:6px">Move: W A S D / arrows / touch joystick &nbsp; • &nbsp; Drag to orbit camera &nbsp; • &nbsp; Adjust angle, bearing and power &nbsp; • &nbsp; Space to fire</div>
-      <div style="margin-top:7px;color:#ffd577">Build hills with ▥ &nbsp;•&nbsp; Tunnel through terrain with ⛏ &nbsp;•&nbsp; Watch your opponent adapt.</div>
+      <b>TACTICAL ARTILLERY</b> &nbsp;•&nbsp; Six moves per tank &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; Deformable terrain
+      <div style="margin-top:6px">Drag the camera to aim the barrel; raise and lower the view to change firing elevation. Adjust power on the right before firing.</div>
+      <div style="margin-top:7px;color:#ffd577">Tap your tank to select it, then tap nearby reachable ground to move. Tap the tank again to deselect. Each movement action costs one of six moves.</div>
     </div>
     <div id="errorMessage" style="display:none;background:#6e2121;color:white;margin-top:20px;border-radius:8px;padding:12px"></div>
   </main>
 </div>
 <div id="hud">
   <div class="hudTop">
-    <div class="stat">
-      <div class="name">◉ YOU &nbsp; <span id="youScore">0</span> PTS</div>
-      <div class="val"><span id="youHp">100</span><span style="font-size:10px;color:#b3d7c0"> HP</span></div>
-      <div class="health"><b id="youHealth"></b></div>
-    </div>
+    <div class="movesPill" title="Six movement actions per match"><span class="movesGlyph">◈</span><div id="moveTokens"></div></div>
     <div class="centerTop"><span id="round">ROUND 1/10</span><small id="wind">WIND · 0.0</small></div>
-    <div class="stat enemyStat">
-      <div class="name">ENEMY &nbsp; <span id="enemyScore">0</span> PTS ◉</div>
-      <div class="val"><span id="enemyHp">100</span><span style="font-size:10px;color:#ffd1be"> HP</span></div>
-      <div class="health"><b id="enemyHealth"></b></div>
-    </div>
     <div class="actionsTop">
-      <button class="iconButton" id="cameraButton" title="Switch camera (C)" aria-label="Switch camera">◉</button>
-      <button class="iconButton" id="settingsButton" title="Settings" aria-label="Settings">⚙</button>
-      <button class="iconButton" id="pauseButton" title="Pause" aria-label="Pause">Ⅱ</button>
+      <button class="iconButton" id="pauseButton" title="Pause, settings and main menu" aria-label="Pause and menu">Ⅱ</button>
     </div>
   </div>
-  <canvas id="radar" width="128" height="128"></canvas>
-  <div id="help">TAP GROUND TO PLAN A MOVE &nbsp;•&nbsp; <span id="moveLeft">6</span> MOVES LEFT &nbsp;•&nbsp; AIM &amp; FIRE</div>
+  <div id="tankHealthLayer" aria-hidden="true">
+    <div class="tankHealthBar playerTankBar" id="playerTankHealth"><div class="tankHealthFill"></div></div>
+    <div class="tankHealthBar enemyTankBar" id="enemyTankHealth"><div class="tankHealthFill"></div></div>
+  </div>
+  <div id="help">TAP YOUR TANK TO MOVE &nbsp;•&nbsp; <span id="moveLeft">6</span> MOVES LEFT</div>
   <div id="message" aria-live="polite"></div><div id="subMessage"></div>
-  <div id="joyBase" aria-label="Movement joystick"><div id="joyKnob"></div></div>
   <div id="bottom">
-    <div class="aimPanel">
-      <div class="aimPair"><label for="bearing">AZIMUTH</label><input id="bearing" type="range" min="-180" max="180" step="1" value="0" aria-label="Turret bearing"><output id="bearingValue">0°</output></div>
-      <div class="aimPair"><label for="angle">ANGLE</label><input id="angle" type="range" min="8" max="82" step="1" value="36" aria-label="Elevation angle"><output id="angleValue">36°</output></div>
-      <div class="aimPair"><label for="power">POWER</label><input id="power" type="range" min="22" max="75" step="1" value="43" aria-label="Shot power"><output id="powerValue">43%</output></div>
-    </div>
-    <div class="weaponPanel">
-      <div class="weaponHead"><span>ARSENAL</span><span id="weaponLabel">CANNON</span></div>
+    <div class="weaponPanel" id="weaponPanel">
+      <button id="weaponToggle" class="weaponToggle" aria-label="Choose weapon" aria-expanded="false" aria-controls="weapons">
+        <canvas id="activeWeaponArt" width="56" height="56" aria-hidden="true"></canvas>
+        <span class="weaponToggleMeta"><span class="weaponToggleHint">WEAPON</span><strong id="weaponLabel">CANNON</strong></span><span class="weaponChevron">⌄</span>
+      </button>
       <div class="weaponChoices" id="weapons"></div>
     </div>
-    <button class="fireButton" id="fire" aria-label="Fire artillery shell">FIRE</button>
+    <div class="rightWeapons">
+      <div class="verticalPower">
+        <output id="powerValue" for="power">43%</output>
+        <input id="power" type="range" min="22" max="75" value="43" step="1" aria-label="Projectile firing power">
+        <span>POWER</span>
+      </div>
+      <button class="fireButton" id="fire" aria-label="Fire artillery shell">FIRE</button>
+    </div>
   </div>
   <div id="turnNotice">
     <div><h2 id="turnTitle">VICTORY</h2><p id="turnDetails"></p><button class="btn main" id="turnAction">▶ PLAY AGAIN</button></div>
@@ -146,7 +179,7 @@ h1 em{display:block;color:var(--gold);font-style:normal}
 </div>
 <div id="panel">
   <div class="modal">
-    <h2>⚙ SETTINGS & PAUSE</h2>
+    <h2>Ⅱ PAUSE & SETTINGS</h2>
     <p>Game settings apply immediately. Audio is synthesized locally and works offline.</p>
     <label>Graphics quality
       <select id="quality"><option value=".65">Battery saver</option><option value=".85">Balanced</option><option value="1" selected>High</option></select>
@@ -155,8 +188,8 @@ h1 em{display:block;color:var(--gold);font-style:normal}
       <select id="difficulty"><option value="easy">Recruit</option><option value="normal" selected>Captain</option><option value="hard">Veteran</option><option value="expert">Commander</option></select>
     </label>
     <label>Sound level <input id="volume" type="range" min="0" max="1" value=".45" step=".05" aria-label="Volume"></label>
-    <label>Invert driving up/down <input id="invert" type="checkbox"></label>
-    <p><b>Controls</b>: W/A/S/D or arrow keys to drive, drag to orbit the camera, mouse wheel to zoom, C to switch camera, 1–6 to choose weapons, space to fire.</p>
+    
+    <p><b>Controls:</b> Drag to aim left/right and up/down. Use the vertical power slider to set firing strength. Tap your tank to select/deselect it, then tap reachable terrain to move. Press Pause for settings, restart or the main menu.</p>
     <div class="modalButtons">
       <button class="btn main" id="closePanel">▶ RESUME / CLOSE</button>
       <button class="btn" id="restartButton">↻ RESTART</button>
@@ -220,7 +253,7 @@ class Renderer{
 
 'use strict';
 class VoxelWorld {
- constructor(renderer,seed=2401){this.r=renderer;this.seed=seed;this.W=112;this.D=112;this.H=39;this.C=16;this.vox=new Uint8Array(this.W*this.D*this.H);this.top=new Uint8Array(this.W*this.D);this.chunks=new Map();this.dirty=new Set();this.props=[];this.generate();this.prepareProps();this.rebuildAll()}
+ constructor(renderer,seed=2401){this.r=renderer;this.seed=seed;this.W=112;this.D=112;this.H=39;this.C=16;this.vox=new Uint8Array(this.W*this.D*this.H);this.top=new Uint8Array(this.W*this.D);this.chunks=new Map();this.dirty=new Set();this.props=[];this.debrisEvents=[];this.ejecta=[];this.generate();this.prepareProps();this.rebuildAll()}
  index(x,y,z){return (y*this.D+z)*this.W+x}
  inBounds(x,y,z){return x>=0&&x<this.W&&z>=0&&z<this.D&&y>=0&&y<this.H}
  getI(x,y,z){if(!this.inBounds(x,y,z))return 0;return this.vox[this.index(x,y,z)]}
@@ -237,18 +270,79 @@ class VoxelWorld {
  rebuildAll(){for(let x=0;x<this.W/this.C;x++)for(let z=0;z<this.D/this.C;z++)this.dirty.add(this.chunkKey(x,z));this.flush(Infinity)}
  flush(limit=3){let n=0;for(let key of this.dirty){this.dirty.delete(key);let [cx,cz]=key.split(',').map(Number),old=this.chunks.get(key);if(old)this.r.dispose(old);let mesh=this.buildChunk(cx,cz);if(mesh)this.chunks.set(key,mesh);else this.chunks.delete(key);if(++n>=limit)break}return n}
  buildChunk(cx,cz){let d=meshData(),sx=cx*this.C,sz=cz*this.C;for(let ix=sx;ix<Math.min(sx+this.C,this.W);ix++)for(let iz=sz;iz<Math.min(sz+this.C,this.D);iz++)for(let iy=0;iy<this.H;iy++){let mat=this.getI(ix,iy,iz);if(!mat)continue;let base=palette[mat]||palette[2],v=.86+rand(ix+iy*1.3,iz+this.seed)*.23,co=base.map(k=>clamp(k*v,0,1)),x=ix-this.W/2,z=iz-this.D/2;for(let [n,points] of FACES){if(this.getI(ix+n[0],iy+n[1],iz+n[2]))continue;quad(d,...points.map(p=>[x+p[0],iy+p[1],z+p[2]]),n,co)}}return this.r.upload(d)}
- editSphere(cx,cy,cz,radius,mat=0){let xa=clamp(Math.floor(cx-radius+this.W/2),0,this.W-1),xb=clamp(Math.ceil(cx+radius+this.W/2),0,this.W-1),za=clamp(Math.floor(cz-radius+this.D/2),0,this.D-1),zb=clamp(Math.ceil(cz+radius+this.D/2),0,this.D-1),ya=clamp(Math.floor(cy-radius),1,this.H-1),yb=clamp(Math.ceil(cy+radius),1,this.H-1),n=0;for(let iz=za;iz<=zb;iz++)for(let ix=xa;ix<=xb;ix++){let dirty=false;for(let iy=ya;iy<=yb;iy++){let dx=ix-this.W/2+.5-cx,dy=iy+.5-cy,dz=iz-this.D/2+.5-cz;if(dx*dx+dy*dy+dz*dz>radius*radius)continue;if(this.setI(ix,iy,iz,mat)){dirty=true;n++}}if(dirty){this.recalc(ix,iz);this.mark(ix,iz)}}this.breakProps(cx,cz,radius);return n}
+ editSphere(cx,cy,cz,radius,mat=0){let xa=clamp(Math.floor(cx-radius+this.W/2),0,this.W-1),xb=clamp(Math.ceil(cx+radius+this.W/2),0,this.W-1),za=clamp(Math.floor(cz-radius+this.D/2),0,this.D-1),zb=clamp(Math.ceil(cz+radius+this.D/2),0,this.D-1),ya=clamp(Math.floor(cy-radius),1,this.H-1),yb=clamp(Math.ceil(cy+radius),1,this.H-1),n=0;for(let iz=za;iz<=zb;iz++)for(let ix=xa;ix<=xb;ix++){let dirty=false;for(let iy=ya;iy<=yb;iy++){let dx=ix-this.W/2+.5-cx,dy=iy+.5-cy,dz=iz-this.D/2+.5-cz;if(dx*dx+dy*dy+dz*dz>radius*radius)continue;if(this.setI(ix,iy,iz,mat)){dirty=true;n++}}if(dirty){this.recalc(ix,iz);this.mark(ix,iz)}}this.breakProps(cx,cy,cz,radius);return n}
  tunnel(a,b,radius=2){let d=V3.sub(b,a),dist=V3.len(d),steps=Math.max(1,Math.ceil(dist/(radius*.75))),removed=0;for(let i=0;i<=steps;i++)removed+=this.editSphere(...V3.add(a,V3.mul(d,i/steps)),radius,0);return removed}
  mountain(cx,cy,cz,radius=5){let ra=Math.ceil(radius),made=0;for(let iz=Math.floor(cz-ra);iz<=Math.ceil(cz+ra);iz++)for(let ix=Math.floor(cx-ra);ix<=Math.ceil(cx+ra);ix++){let dx=ix+.5-cx,dz=iz+.5-cz,d=Math.hypot(dx,dz);if(d>radius)continue;let rise=Math.floor(1+radius*1.34*(1-d/radius)**1.15),base=Math.max(1,this.height(ix,iz)-1);for(let iy=base;iy<Math.min(this.H-1,base+rise);iy++)if(this.setI(this.toX(ix),iy,this.toZ(iz),iy>base+rise-2?1:2))made++;let vx=this.toX(ix),vz=this.toZ(iz);this.recalc(vx,vz);this.mark(vx,vz)}return made}
  settle(cx,cy,cz,radius){let xa=clamp(this.toX(cx-radius),1,this.W-2),xb=clamp(this.toX(cx+radius),1,this.W-2),za=clamp(this.toZ(cz-radius),1,this.D-2),zb=clamp(this.toZ(cz+radius),1,this.D-2);for(let iter=0;iter<3;iter++)for(let iz=za;iz<=zb;iz++)for(let ix=xa;ix<=xb;ix++)for(let iy=2;iy<this.H-1;iy++){let m=this.getI(ix,iy,iz);if((m===4||m===2)&&!this.getI(ix,iy-1,iz)){this.setI(ix,iy-1,iz,m);this.setI(ix,iy,iz,0);this.mark(ix,iz)}}for(let iz=za;iz<=zb;iz++)for(let ix=xa;ix<=xb;ix++)this.recalc(ix,iz)}
- breakProps(cx,cz,r){for(let p of this.props)if(Math.hypot(p.x-cx,p.z-cz)<r+1.2&&p.kind!=='cloud')p.alive=false}
+ propHit(x,y,z){
+  for(let p of this.props){
+   if(!p.alive||p.kind==='cloud')continue;
+   const s=p.scale||1,dx=Math.abs(x-p.x),dz=Math.abs(z-p.z),dy=y-p.y;
+   if(p.kind==='tree'&&dy>=0&&dy<3.9*s&&((dy<1.65*s&&dx<.53*s&&dz<.53*s)||(dy>=1.4*s&&dx<.9*s&&dz<.9*s)))return p;
+   if(p.kind==='rock'&&dy>=0&&dy<.92*s&&dx<.83*s&&dz<.7*s)return p;
+   if(p.kind==='ruin'&&dy>=0&&dy<4.35&&dx<2.5&&dz<3.2)return p;
+  }
+  return null;
+ }
+ breakProps(cx,cy,cz,r){
+  let broken=0;
+  for(let p of this.props){
+   if(!p.alive||p.kind==='cloud')continue;
+   let s=p.scale||1,extent=p.kind==='ruin'?2.5:p.kind==='tree'?1.65*s:.7*s;
+   let centerY=p.y+(p.kind==='tree'?1.6*s:p.kind==='ruin'?2:.4*s);
+   if(Math.hypot(p.x-cx,centerY-cy,p.z-cz)>r+extent)continue;
+   p.alive=false;p.fallAge=0;p.fallYaw=Math.atan2(p.z-cz,p.x-cx);broken++;
+   this.debrisEvents.push({kind:p.kind,x:p.x,y:p.y+(p.kind==='tree'?1.6*s:1),z:p.z,s,material:p.kind==='tree'?6:3});
+  }
+  return broken;
+ }
+ // Material outside the rim settles into persistent, irregular voxel heaps.
+ queueEjecta(cx,cy,cz,r,removed){
+  if(removed<1)return;
+  let count=Math.min(135,Math.floor(removed*.17)),places=[],golden=2.39996322973;
+  for(let i=0;i<count;i++){
+   let angle=i*golden,dist=r+.8+Math.sqrt(rand(cx+i*2.1,cz+i*3.3))*Math.min(3.4,r*.63);
+   let wx=Math.floor(cx+Math.cos(angle)*dist),wz=Math.floor(cz+Math.sin(angle)*dist);
+   let ix=this.toX(wx),iz=this.toZ(wz);
+   if(!this.inBounds(ix,1,iz))continue;
+   let top=this.height(wx,wz);if(top<2||top>this.H-3)continue;
+   let mat=this.getI(ix,top-1,iz);if(!mat)mat=2;
+   places.push({ix,iz,mat:mat===1?2:mat,x:wx,z:wz});
+  }
+  if(places.length)this.ejecta.push({places,index:0,delay:.12,rate:0});
+ }
+ tickDestruction(dt){
+  for(let p of this.props)if(p.fallAge!==undefined)p.fallAge+=dt;
+  for(let j=this.ejecta.length-1;j>=0;j--){
+   let job=this.ejecta[j];job.delay-=dt;if(job.delay>0)continue;
+   job.rate+=dt*100;let steps=Math.min(12,Math.floor(job.rate));job.rate-=steps;
+   for(let k=0;k<steps&&job.index<job.places.length;k++){
+    let q=job.places[job.index++],y=this.height(q.x,q.z);
+    if(y>this.H-3)continue;
+    if(this.setI(q.ix,y,q.iz,q.mat)){this.recalc(q.ix,q.iz);this.mark(q.ix,q.iz);}
+   }
+   if(job.index>=job.places.length)this.ejecta.splice(j,1);
+  }
+ }
+
  prepareProps(){for(let ix=3;ix<this.W-3;ix+=3)for(let iz=3;iz<this.D-3;iz+=3){let x=ix-this.W/2,z=iz-this.D/2,rr=rand(ix+this.seed,iz),h=this.height(x,z),spawn=[[-31,-15],[29,21]].some(p=>Math.hypot(x-p[0],z-p[1])<11);if(spawn||h<5||h>20)continue;if(rr>.79&&this.getI(ix,h-1,iz)===1)this.props.push({kind:'tree',x,y:h,z,scale:.8+rand(ix*2,iz*3)*1.15,alive:true});else if(rr<.055)this.props.push({kind:'rock',x,y:h,z,scale:.7+rr*8,alive:true})}
  for(let [x,z] of [[-5,-23],[9,1],[19,-25],[-24,17],[1,33],[-43,-28]])this.props.push({kind:'ruin',x,y:this.height(x,z),z,scale:1,alive:true});
  for(let i=0;i<9;i++)this.props.push({kind:'cloud',x:-48+i*13,y:35+rand(i,3)*8,z:-23+Math.sin(i*4)*35,scale:2+rand(i,7)*2.5,alive:true})}
- draw(time,eye){let r=this.r;for(let mesh of this.chunks.values())r.draw(mesh,M4.id());r.cube([0,.4,0],[154,.8,154],[.23,.44,.56]);for(let p of this.props){if(!p.alive)continue;let dx=p.x-eye[0],dz=p.z-eye[2];if(dx*dx+dz*dz>110*110)continue;let {x,y,z,scale:s}=p;
- if(p.kind==='tree'){r.cube([x,y+s*.8,z],[.43*s,1.6*s,.43*s],[.37,.27,.18]);r.cube([x,y+s*1.9,z],[1.65*s,1.4*s,1.65*s],[.20,.39,.24]);r.cube([x,y+s*2.7,z],[1.24*s,1.1*s,1.24*s],[.27,.47,.28]);r.cube([x,y+s*3.25,z],[.8*s,.8*s,.8*s],[.32,.54,.3])}
- else if(p.kind==='rock'){r.cube([x,y+s*.45,z],[1.35*s,.8*s,1.1*s],[.43,.46,.45],M4.ry(rand(x,z)*3))}
- else if(p.kind==='ruin'){let c=[.59,.52,.42];r.cube([x,y+2,z],[4,4,.65],c);r.cube([x+2,y+1.7,z-1.5],[.7,3.4,3.6],c);r.cube([x-2,y+1.5,z-1.5],[.7,3,3.6],c);r.cube([x,y+3.9,z-1.5],[4.7,.5,3.8],[.51,.43,.37]);r.cube([x,y+.6,z+1.3],[1.9,1.2,.65],[.28,.27,.25])}
+ draw(time,eye){let r=this.r;for(let mesh of this.chunks.values())r.draw(mesh,M4.id());r.cube([0,.4,0],[154,.8,154],[.23,.44,.56]);for(let p of this.props){if(!p.alive&&(p.fallAge===undefined||p.fallAge>1.7))continue;let dx=p.x-eye[0],dz=p.z-eye[2];if(dx*dx+dz*dz>110*110)continue;let {x,y,z,scale:s}=p;
+ if(p.kind==='tree'){
+   let t=p.fallAge===undefined?0:clamp(p.fallAge/1.1,0,1),angle=t*t*1.33,yaw=p.fallYaw||0;
+   const trunk=(off,size,col)=>{
+    let px=Math.sin(angle)*off*Math.cos(yaw),pz=Math.sin(angle)*off*Math.sin(yaw),py=Math.cos(angle)*off;
+    let m=M4.mul(M4.t(x+px,y+py,z+pz),M4.mul(M4.ry(-yaw),M4.mul(M4.rz(-angle),M4.s(...size))));
+    r.draw(r.box,m,col);
+   };
+   trunk(s*.8,[.43*s,1.6*s,.43*s],[.37,.27,.18]);
+   trunk(s*1.9,[1.65*s,1.4*s,1.65*s],[.20,.39,.24]);
+   trunk(s*2.7,[1.24*s,1.1*s,1.24*s],[.27,.47,.28]);
+   trunk(s*3.25,[.8*s,.8*s,.8*s],[.32,.54,.3]);
+  }
+ else if(p.kind==='rock'){if(!p.alive)continue;r.cube([x,y+s*.45,z],[1.35*s,.8*s,1.1*s],[.43,.46,.45],M4.ry(rand(x,z)*3))}
+ else if(p.kind==='ruin'){if(!p.alive)continue;let c=[.59,.52,.42];r.cube([x,y+2,z],[4,4,.65],c);r.cube([x+2,y+1.7,z-1.5],[.7,3.4,3.6],c);r.cube([x-2,y+1.5,z-1.5],[.7,3,3.6],c);r.cube([x,y+3.9,z-1.5],[4.7,.5,3.8],[.51,.43,.37]);r.cube([x,y+.6,z+1.3],[1.9,1.2,.65],[.28,.27,.25])}
  else if(p.kind==='cloud'){let drift=Math.sin(time*.015+p.x)*2,cp=[x+drift,y,z];r.cube(cp,[7*s,1.2*s,2.4*s],[.79,.81,.78]);r.cube([cp[0]+s*2,cp[1]+s*.27,cp[2]],[3*s,1.4*s,2.7*s],[.87,.87,.82])}
  }}
 }
@@ -318,33 +412,83 @@ class AudioFX{
 class Game{
  constructor(){this.canvas=document.getElementById('viewport');this.r=new Renderer(this.canvas);this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.audio=new AudioFX();this.mode='menu';this.turn='menu';this.cam='chase';this.cameraPos=[-42,28,-36];this.cameraTarget=[-30,10,-15];this.orbit=0;this.zoom=1;this.wind=0;this.selected=0;this.round=1;this.maxRounds=10;this.moveLeft=21;this.projectiles=[];this.fx=[];this.keys={};this.joy={x:0,y:0};this.time=0;this.prev=performance.now();this.stepAcc=0;this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.paused=false;this.aims=0;this.messageTimer=0;this.shake=0;this.settings={quality:1,difficulty:'normal',invert:false};this.bind();this.ui();requestAnimationFrame(t=>this.frame(t))}
  dom(id){return document.getElementById(id)}
- bind(){this.dom('startDuel').onclick=()=>this.start('duel');this.dom('startSandbox').onclick=()=>this.start('sandbox');this.dom('fire').onclick=()=>this.fire();this.dom('cameraButton').onclick=()=>{this.cam=this.cam==='chase'?'strategy':this.cam==='strategy'?'orbit':'chase';this.audio.select();this.toast('CAMERA  •  '+this.cam.toUpperCase())};this.dom('settingsButton').onclick=()=>this.openPanel();this.dom('pauseButton').onclick=()=>this.openPanel();this.dom('menuSettings').onclick=()=>this.openPanel();this.dom('closePanel').onclick=()=>this.closePanel();this.dom('restartButton').onclick=()=>{this.closePanel();this.start(this.mode==='menu'?'duel':this.mode)};this.dom('quitButton').onclick=()=>{this.closePanel();this.mode='menu';this.turn='menu';this.dom('menu').classList.remove('hidden');this.dom('hud').classList.remove('active')};this.dom('quality').onchange=e=>{this.r.quality=Number(e.target.value)};this.dom('volume').oninput=e=>{this.audio.volume=Number(e.target.value)};this.dom('difficulty').onchange=e=>this.settings.difficulty=e.target.value;this.dom('invert').onchange=e=>this.settings.invert=e.target.checked;
-  for(let [id,prop,min,max] of [['bearing','turret',-180,180],['angle','elev',8,82],['power','power',22,75]]){let el=this.dom(id);el.addEventListener('input',()=>{let n=Number(el.value);if(prop==='turret')this.player.turret=n*Math.PI/180;else if(prop==='elev')this.player.elev=n*Math.PI/180;else this.player.power=n;this.updateAimText()})}
-  this.dom('weapons').innerHTML='';for(let i=0;i<WEAPONS.length;i++){let w=WEAPONS[i],b=document.createElement('button');b.className='weaponPick';b.title=w.description;b.innerHTML='<span>'+w.icon+'</span><small>'+w.name+'</small>';b.onclick=()=>this.pickWeapon(i);this.dom('weapons').appendChild(b)}
-  this.bindJoystick();window.addEventListener('keydown',e=>{if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();this.keys[e.code]=true;if(e.repeat)return;if(e.code==='Space')this.fire();if(e.code==='KeyC')this.dom('cameraButton').click();if(e.code==='Escape')this.openPanel();if(/^Digit[1-6]$/.test(e.code))this.pickWeapon(Number(e.code.slice(-1))-1)});window.addEventListener('keyup',e=>this.keys[e.code]=false);
-  let pointer=null;this.canvas.addEventListener('pointerdown',e=>{pointer={id:e.pointerId,x:e.clientX,y:e.clientY};try{this.canvas.setPointerCapture(e.pointerId)}catch(x){}});this.canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;let dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;pointer.x=e.clientX;pointer.y=e.clientY;this.orbit+=dx*.008;this.zoom=clamp(this.zoom+dy*.003,.6,1.8)});this.canvas.addEventListener('pointerup',()=>pointer=null);this.canvas.addEventListener('pointercancel',()=>pointer=null);this.canvas.addEventListener('wheel',e=>{this.zoom=clamp(this.zoom+Math.sign(e.deltaY)*.085,.6,1.8)},{passive:true});window.addEventListener('blur',()=>{this.keys={};this.joy={x:0,y:0}});this.pickWeapon(0)}
- bindJoystick(){let base=this.dom('joyBase'),knob=this.dom('joyKnob'),held=null;let move=e=>{let b=base.getBoundingClientRect(),x=e.clientX-(b.left+b.width/2),y=e.clientY-(b.top+b.height/2),radius=b.width*.34,mag=Math.hypot(x,y),mul=Math.min(1,radius/(mag||1));x*=mul;y*=mul;this.joy.x=x/radius;this.joy.y=-y/radius;knob.style.transform='translate('+x+'px,'+y+'px)'};base.addEventListener('pointerdown',e=>{e.preventDefault();held=e.pointerId;base.setPointerCapture(e.pointerId);move(e)});base.addEventListener('pointermove',e=>{if(e.pointerId===held){e.preventDefault();move(e)}});let release=e=>{if(e.pointerId!==held)return;held=null;this.joy={x:0,y:0};knob.style.transform='translate(0,0)'};base.addEventListener('pointerup',release);base.addEventListener('pointercancel',release)}
- updateAimText(){this.dom('bearingValue').textContent=Math.round(this.player.turret*180/Math.PI)+'°';this.dom('angleValue').textContent=Math.round(this.player.elev*180/Math.PI)+'°';this.dom('powerValue').textContent=Math.round(this.player.power)+'%'}
- pickWeapon(i){this.selected=i;let children=this.dom('weapons').children;for(let j=0;j<children.length;j++)children[j].classList.toggle('selected',i===j);this.dom('weaponLabel').textContent=WEAPONS[i].name.toUpperCase();if(this.audio)this.audio.select()}
- ui(){this.dom('bearing').value=Math.round(this.player.turret*180/Math.PI);this.dom('angle').value=Math.round(this.player.elev*180/Math.PI);this.dom('power').value=this.player.power;this.updateAimText();this.dom('youHp').textContent=Math.ceil(this.player.hp);this.dom('enemyHp').textContent=Math.ceil(this.enemy.hp);this.dom('youHealth').style.width=this.player.hp+'%';this.dom('enemyHealth').style.width=this.enemy.hp+'%';this.dom('youScore').textContent=this.player.score;this.dom('enemyScore').textContent=this.enemy.score;this.dom('round').textContent=this.mode==='sandbox'?'SANDBOX':'ROUND '+this.round+'/'+this.maxRounds;this.dom('wind').textContent='WIND '+(this.wind>0?'→ ':this.wind<0?'← ':'· ')+Math.abs(this.wind).toFixed(1);let active=this.turn==='player'&&this.mode!=='menu'&&!this.paused;this.dom('fire').disabled=!active;this.dom('fire').textContent=this.mode==='sandbox'?'FIRE':'FIRE';this.dom('moveLeft').textContent=Math.ceil(this.moveLeft)}
- toast(s){let el=this.dom('toast');el.textContent=s;el.classList.add('show');clearTimeout(this.toastHandle);this.toastHandle=setTimeout(()=>el.classList.remove('show'),2100)}
+bind(){
+ const get=id=>this.dom(id);
+ get('startDuel').onclick=()=>this.start('duel');
+ get('fire').onclick=()=>this.fire();
+ get('pauseButton').onclick=()=>this.openPanel();
+ get('closePanel').onclick=()=>this.closePanel();
+ get('restartButton').onclick=()=>{this.closePanel();this.start('duel');};
+ get('quitButton').onclick=()=>{this.closePanel();this.mode='menu';this.turn='menu';get('menu').classList.remove('hidden');get('hud').classList.remove('active');};
+ get('quality').onchange=e=>this.r.quality=Number(e.target.value);
+ get('volume').oninput=e=>this.audio.volume=Number(e.target.value);
+ get('difficulty').onchange=e=>this.settings.difficulty=e.target.value;
+ get('power').addEventListener('input',()=>{this.player.power=Number(get('power').value);this.updateAimText();});
+ get('weapons').innerHTML='';
+ for(let i=0;i<WEAPONS.length;i++){
+  let w=WEAPONS[i],b=document.createElement('button');
+  b.className='weaponPick';b.title=w.description;b.innerHTML='<span>'+w.icon+'</span><small>'+w.name+'</small>';
+  b.onclick=()=>this.pickWeapon(i);get('weapons').appendChild(b);
+ }
+ window.addEventListener('keydown',e=>{
+  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
+  this.keys[e.code]=true;
+  if(e.repeat)return;
+  if(e.code==='Space')this.fire();
+  if(e.code==='Escape'){if(get('panel').classList.contains('open'))this.closePanel();else this.openPanel();}
+  if(/^Digit[1-6]$/.test(e.code))this.pickWeapon(Number(e.code.slice(-1))-1);
+ });
+ window.addEventListener('keyup',e=>this.keys[e.code]=false);
+ let pointer=null;
+ this.canvas.addEventListener('pointerdown',e=>{pointer={id:e.pointerId,x:e.clientX,y:e.clientY};try{this.canvas.setPointerCapture(e.pointerId)}catch(x){}});
+ this.canvas.addEventListener('pointermove',e=>{
+  if(!pointer||pointer.id!==e.pointerId)return;
+  let dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;
+  pointer.x=e.clientX;pointer.y=e.clientY;
+  if(this.handleSceneDrag)this.handleSceneDrag(dx,dy);
+  else{this.orbit+=dx*.008;this.zoom=clamp(this.zoom+dy*.003,.6,1.8);}
+ });
+ this.canvas.addEventListener('pointerup',()=>pointer=null);
+ this.canvas.addEventListener('pointercancel',()=>pointer=null);
+ this.canvas.addEventListener('wheel',e=>{this.zoom=clamp(this.zoom+Math.sign(e.deltaY)*.085,.6,1.8)},{passive:true});
+ window.addEventListener('blur',()=>{this.keys={};this.joy={x:0,y:0};});
+ this.pickWeapon(0);
+}
+  updateAimText(){
+  const power=this.dom('powerValue');
+  if(power)power.textContent=Math.round(this.player.power)+'%';
+}
+  pickWeapon(i){this.selected=i;let children=this.dom('weapons').children;for(let j=0;j<children.length;j++)children[j].classList.toggle('selected',i===j);this.dom('weaponLabel').textContent=WEAPONS[i].name.toUpperCase();if(this.audio)this.audio.select()}
+ui(){
+ this.dom('power').value=this.player.power;
+ this.updateAimText();
+ this.dom('round').textContent='ROUND '+this.round+'/'+this.maxRounds;
+ this.dom('wind').textContent='WIND '+(this.wind>0?'→ ':this.wind<0?'← ':'· ')+Math.abs(this.wind).toFixed(1);
+ this.dom('fire').disabled=!(this.turn==='player'&&this.mode==='duel'&&!this.paused);
+ this.dom('moveLeft').textContent=Math.ceil(this.moveLeft);
+}
+  toast(s){let el=this.dom('toast');el.textContent=s;el.classList.add('show');clearTimeout(this.toastHandle);this.toastHandle=setTimeout(()=>el.classList.remove('show'),2100)}
  banner(s,sub='',duration=1.7){this.dom('message').textContent=s;this.dom('subMessage').textContent=sub;this.dom('message').style.opacity=1;this.dom('subMessage').style.opacity=1;this.messageTimer=duration}
  openPanel(){this.paused=true;this.dom('panel').classList.add('open')}
  closePanel(){this.dom('panel').classList.remove('open');this.paused=false;this.prev=performance.now()}
- start(mode){this.audio.wake();this.mode=mode;this.turn='player';this.paused=false;this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.wind=(Math.random()-.5)*3.4;this.round=1;this.selected=0;this.moveLeft=22;this.projectiles=[];this.fx=[];this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.cam='chase';this.orbit=0;this.dom('menu').classList.add('hidden');this.dom('hud').classList.add('active');this.pickWeapon(0);this.ui();this.banner(mode==='sandbox'?'TERRAIN SANDBOX':'BATTLE START','W · A · S · D TO DRIVE  •  AIM & FIRE',2.5)}
- fire(){if(this.turn!=='player'||this.paused)return;this.launch(this.player,WEAPONS[this.selected]);if(this.mode!=='sandbox'){this.turn='flying';this.shooter='player';this.ui()}else{this.shooter='sandbox';this.moveLeft=22;this.ui()}}
- launch(t,w){let dir=t.direction(),pos=t.muzzle(),speed=t.power*.94;this.projectiles.push({pos,vel:V3.mul(dir,speed),w,owner:t,age:0,life:0,bounce:0,trail:[],frag:false});t.recoil=1;this.audio.shot();this.shake=.15;this.banner(w.name.toUpperCase(),'INCOMING',.55)}
+ start(mode){this.audio.wake();mode='duel';this.mode=mode;this.turn='player';this.paused=false;this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.wind=(Math.random()-.5)*3.4;this.round=1;this.selected=0;this.moveLeft=22;this.projectiles=[];this.fx=[];this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.cam='chase';this.orbit=0;this.dom('menu').classList.add('hidden');this.dom('hud').classList.add('active');this.pickWeapon(0);this.ui();this.banner('BATTLE START','DRAG TO AIM • TAP TANK TO MOVE',2.5)}
+ fire(){
+  if(this.turn!=='player'||this.paused||this.movingPath)return;
+  this.launch(this.player,WEAPONS[this.selected]);
+  this.turn='flying';this.shooter='player';this.ui();
+ }
+  launch(t,w){let dir=t.direction(),pos=t.muzzle(),speed=t.power*.94;this.projectiles.push({pos,vel:V3.mul(dir,speed),w,owner:t,age:0,life:0,bounce:0,trail:[],frag:false});t.recoil=1;this.audio.shot();this.shake=.15;this.banner(w.name.toUpperCase(),'INCOMING',.55)}
  spawnFX(pos,col,n=42,energy=10){for(let i=0;i<n;i++){if(this.fx.length>260)this.fx.shift();let a=Math.random()*6.283,up=Math.random(),dir=[Math.cos(a)*Math.sqrt(1-up*up),up,Math.sin(a)*Math.sqrt(1-up*up)];this.fx.push({pos:[...pos],vel:V3.mul(dir,energy*(.3+.8*Math.random())),color:col,size:.11+Math.random()*.35,life:.5+Math.random()*1.05,max:1.5})}}
  burstCluster(p){for(let i=0;i<6;i++){let a=i*6.283/6,vel=[p.vel[0]*.54+Math.cos(a)*7,p.vel[1]*.3+6+Math.random()*6,p.vel[2]*.54+Math.sin(a)*7];this.projectiles.push({pos:[...p.pos],vel,w:p.w,owner:p.owner,age:0,bounce:0,trail:[],frag:true})}this.spawnFX(p.pos,p.w.col,22,5);this.audio.tone(620,.24,'triangle',.15,-280)}
  damage(center,rad,damage,owner){for(let t of [this.player,this.enemy]){let d=V3.len(V3.sub(t.position(),center));let hit=clamp(1-d/(rad+2.4),0,1);if(!hit)continue;let dealt=t.applyDamage(damage*hit);if(owner&&owner!==t)owner.score+=Math.round(dealt*1.5);if(dealt>5){this.spawnFX(t.position(),[1,.45,.18],12,6);this.audio.hit()}this.ui()}}
  impact(p,pos){let w=p.w;this.audio.blast(w.radius/4);this.shake=clamp(this.shake+w.radius*.045,0,.9);if(w.id==='cluster'&&!p.frag){this.burstCluster(p);return}let rad=p.frag?2.25:w.radius;if(w.id==='mountain'){let m=this.world.mountain(pos[0],pos[1],pos[2],rad);this.spawnFX(pos,[.64,.97,.48],38,9);this.damage(pos,rad,4,p.owner);this.banner('TERRAIN RAISED','+'+m+' VOXELS',.9)}
  else if(w.id==='digger'){let dir=V3.norm([p.vel[0],-.2,p.vel[2]]),end=V3.add(pos,V3.mul(dir,13));let n=this.world.tunnel(pos,end,rad);this.world.settle(pos[0],pos[1],pos[2],rad+4);this.spawnFX(pos,w.col,55,12);this.spawnFX(end,w.col,35,6);this.damage(pos,rad+3,w.damage,p.owner);this.banner('TUNNEL CUT','−'+n+' VOXELS',.85)}
- else{let removed=this.world.editSphere(...pos,rad,0);if(rad>3)this.world.settle(...pos,rad+2);this.spawnFX(pos,w.col,Math.floor(20+rad*11),8+rad*1.5);this.spawnFX(pos,[.48,.45,.4],26,6);this.damage(pos,rad,p.frag?21:w.damage,p.owner);if(w.id==='mega')this.banner('MEGA IMPACT','−'+removed+' VOXELS',1.05)}
+ else{let removed=this.world.editSphere(...pos,rad,0);if(rad>3)this.world.settle(...pos,rad+2);if(this.world.queueEjecta)this.world.queueEjecta(...pos,rad,removed);if(this.spawnCratersideDebris)this.spawnCratersideDebris(p,pos,rad,removed);this.spawnFX(pos,w.col,Math.floor(20+rad*11),8+rad*1.5);this.spawnFX(pos,[.48,.45,.4],26,6);this.damage(pos,rad,p.frag?21:w.damage,p.owner);if(w.id==='mega')this.banner('MEGA IMPACT','−'+removed+' VOXELS',1.05)}
  this.player.updateHeight(.02,this.world);this.enemy.updateHeight(.02,this.world);
  }
  stepProjectiles(dt){let list=this.projectiles;for(let i=list.length-1;i>=0;i--){let p=list[i];p.age+=dt;if(p.w.id==='cluster'&&!p.frag&&p.age>1.25){list.splice(i,1);this.burstCluster(p);continue}
- p.vel[0]+=this.wind*.36*dt;p.vel[1]-=21*dt;p.pos=V3.add(p.pos,V3.mul(p.vel,dt));if(p.age%0.11<dt)p.trail.unshift([...p.pos]);if(p.trail.length>11)p.trail.pop();
- let collision=this.world.solid(...p.pos);if(p.age>.32&&[this.player,this.enemy].some(t=>V3.len(V3.sub(p.pos,t.position()))<1.9))collision=true;
+ const oldPosition=[...p.pos];p.vel[0]+=this.wind*.36*dt;p.vel[1]-=21*dt;p.pos=V3.add(p.pos,V3.mul(p.vel,dt));if(p.age%0.11<dt)p.trail.unshift([...p.pos]);if(p.trail.length>11)p.trail.pop();
+ let collision=this.world.solid(...p.pos);if(this.world.propHit){let segments=Math.max(1,Math.ceil(V3.len(V3.sub(p.pos,oldPosition))/.32));for(let k=1;k<=segments;k++){let sample=V3.add(oldPosition,V3.mul(V3.sub(p.pos,oldPosition),k/segments));if(this.world.propHit(...sample)){collision=true;p.pos=sample;break;}}}if(p.age>.32&&[this.player,this.enemy].some(t=>V3.len(V3.sub(p.pos,t.position()))<1.9))collision=true;
  if(p.pos[1]<-1||p.pos[1]>100||Math.abs(p.pos[0])>56||Math.abs(p.pos[2])>56||p.age>9)collision=true;
  if(collision){if(p.w.id==='roller'&&p.bounce<4&&p.age<5){p.bounce++;p.vel[0]*=.78;p.vel[2]*=.78;p.vel[1]=p.bounce<3?6:3;let ground=this.world.height(p.pos[0],p.pos[2]);p.pos[1]=Math.max(p.pos[1],ground+1.3);this.spawnFX(p.pos,p.w.col,8,3);this.audio.tone(270,.10,'triangle',.13,-50);continue}
  list.splice(i,1);let ground=this.world.height(p.pos[0],p.pos[2]);this.impact(p,[clamp(p.pos[0],-54,54),clamp(p.pos[1],Math.max(1,ground-3),37),clamp(p.pos[2],-54,54)])}
@@ -360,8 +504,18 @@ class Game{
  let difficulty=this.settings.difficulty,spread=difficulty==='easy'?.14:difficulty==='hard'?.015:difficulty==='expert'?.004:.055;e.turret=best.yaw-e.yaw+(Math.random()-.5)*spread;e.elev=best.elev+(Math.random()-.5)*spread*.6;e.power=best.power+(Math.random()-.5)*spread*22;
  this.banner('ENEMY FIRING',w.name.toUpperCase(),.85);this.launch(e,w);this.turn='flying';this.shooter='enemy';this.ui()}
  afterVolley(){this.resolveTimer=-1;if(this.player.hp<=0||this.enemy.hp<=0){this.finish();return}if(this.shooter==='player'){this.turn='enemy';this.aiTimer=1.15;this.banner('ENEMY TURN','ANALYSING TRAJECTORY',1);this.ui()}else if(this.shooter==='enemy'){this.round++;if(this.round>this.maxRounds&&this.mode==='duel'){this.finish();return}this.turn='player';this.wind=clamp(this.wind+(Math.random()-.5)*1.25,-2.2,2.2);this.moveLeft=22;this.banner('YOUR TURN','REPOSITION • AIM • FIRE',1.25);this.ui()}}
- finish(){this.turn='end';let outcome=this.player.hp<=0?'DEFEAT':this.enemy.hp<=0?'VICTORY':this.player.score>=this.enemy.score?'VICTORY':'DEFEAT';this.banner(outcome,'YOU '+this.player.score+'  •  ENEMY '+this.enemy.score,999);this.audio.tone(outcome==='VICTORY'?670:210,.7,'triangle',.25,outcome==='VICTORY'?250:-140);this.dom('turnNotice').classList.add('show');this.dom('turnTitle').textContent=outcome;this.dom('turnDetails').textContent='SCORE '+this.player.score+' : '+this.enemy.score+'  •  '+this.round+' ROUNDS';this.dom('turnAction').onclick=()=>{this.dom('turnNotice').classList.remove('show');this.start(this.mode)};try{let best=Number(localStorage.getItem('voxelTanksBest')||0);if(this.player.score>best)localStorage.setItem('voxelTanksBest',this.player.score)}catch(e){}}
- update(dt){this.time+=dt;if(this.messageTimer>0){this.messageTimer-=dt;if(this.messageTimer<=0){this.dom('message').style.opacity=0;this.dom('subMessage').style.opacity=0}}
+ finish(){
+  this.turn='end';
+  const diff=this.player.hp-this.enemy.hp;
+  let outcome=this.player.hp<=0?'DEFEAT':this.enemy.hp<=0?'VICTORY':diff>=0?'VICTORY':'DEFEAT';
+  this.banner(outcome,'',999);
+  this.audio.tone(outcome==='VICTORY'?670:210,.7,'triangle',.25,outcome==='VICTORY'?250:-140);
+  this.dom('turnNotice').classList.add('show');
+  this.dom('turnTitle').textContent=outcome;
+  this.dom('turnDetails').textContent='YOU '+Math.ceil(this.player.hp)+'% • ENEMY '+Math.ceil(this.enemy.hp)+'% • '+this.round+' ROUNDS';
+  this.dom('turnAction').onclick=()=>{this.dom('turnNotice').classList.remove('show');this.start('duel');};
+ }
+  update(dt){this.time+=dt;if(this.messageTimer>0){this.messageTimer-=dt;if(this.messageTimer<=0){this.dom('message').style.opacity=0;this.dom('subMessage').style.opacity=0}}
  let p=this.player,e=this.enemy;
  if(this.turn==='player'){let move=(this.keys.KeyW||this.keys.ArrowUp?1:0)-(this.keys.KeyS||this.keys.ArrowDown?1:0)+this.joy.y,steer=(this.keys.KeyD||this.keys.ArrowRight?1:0)-(this.keys.KeyA||this.keys.ArrowLeft?1:0)+this.joy.x;move=clamp(move,-1,1);steer=clamp(steer,-1,1);if(this.settings.invert)move=-move;if(this.moveLeft<=0)move=0;let before=[p.x,p.z];p.update(dt,move,steer,this.world);this.moveLeft=Math.max(0,this.moveLeft-Math.hypot(p.x-before[0],p.z-before[1]));}else{p.updateHeight(dt,this.world)}e.updateHeight(dt,this.world);
  if(this.turn==='enemy'){let desired=Math.atan2(p.x-e.x,p.z-e.z),difference=Math.atan2(Math.sin(desired-e.yaw),Math.cos(desired-e.yaw));let steer=clamp(difference*1.4,-1,1);if(this.aiTimer>.42)e.update(dt,.68,steer,this.world);this.aiTimer-=dt;if(this.aiTimer<=0)this.decideEnemy()}
@@ -381,8 +535,8 @@ class Game{
  for(let p of this.projectiles){let co=p.w.col;for(let i=0;i<p.trail.length;i++){let q=p.trail[i],s=.21*(1-i/p.trail.length)+.04;this.r.cube(q,[s,s,s],co)}let s=p.w.id==='mega'?.63:p.w.id==='roller'?.66:.39;this.r.cube(p.pos,[s,s,s],co);this.r.cube(p.pos,[s*.35,s*.35,s*.35],[1,1,.8])}
  for(let p of this.fx){let alpha=clamp(p.life/1.4,.08,.9),s=p.size*clamp(p.life,0,1.2);this.r.cube(p.pos,[s,s,s],p.color,null,alpha)}
  this.drawRadar()}
- drawRadar(){if(this.mode==='menu')return;let c=this.dom('radar');if(!c||getComputedStyle(c).display==='none')return;let ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);let m=w/2;ctx.fillStyle='rgba(9,31,40,.75)';ctx.beginPath();ctx.arc(m,m,m-2,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(222,237,226,.24)';for(let rad of [.35,.7,.94]){ctx.beginPath();ctx.arc(m,m,m*rad,0,6.283);ctx.stroke()}for(let [t,col] of [[this.player,'#91ffd2'],[this.enemy,'#ff9e80']]){let x=m+t.x/56*m*.88,y=m+t.z/56*m*.88;ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,5,0,6.283);ctx.fill()}ctx.fillStyle='#c7d7cd';ctx.font='bold 10px system-ui';ctx.fillText('N',m-3,11)}
- frame(now){let dt=clamp((now-this.prev)/1000,0,.05);this.prev=now;if(!this.paused)this.update(dt);this.draw(now);requestAnimationFrame(t=>this.frame(t))}
+ drawRadar(){}
+  frame(now){let dt=clamp((now-this.prev)/1000,0,.05);this.prev=now;if(!this.paused)this.update(dt);this.draw(now);requestAnimationFrame(t=>this.frame(t))}
 }
 window.addEventListener('DOMContentLoaded',()=>{try{window.voxelTanks=new Game()}catch(e){console.error(e);let title=document.getElementById('errorMessage');if(title){title.style.display='block';title.textContent='Cannot start Voxel Tanks: '+e.message}}});
 
@@ -538,25 +692,7 @@ class WeaponCinematics{
  }
 }
 // Preserve underlying engine and override only the coordinated v0.2 experience.
-const OLD_BIND=Game.prototype.bind;
-Game.prototype.bind=function(){
- OLD_BIND.call(this);
- this.dom('hud').insertAdjacentHTML('beforeend','<div id="moveControls"><button id="moveToggle" class="iconButton" title="Plan movement" aria-label="Plan movement">↗</button><b id="moveCredits">6</b><button id="moveConfirm" class="iconButton" title="Confirm move" aria-label="Confirm move">✓</button><button id="moveCancel" class="iconButton" title="Cancel route" aria-label="Cancel route">×</button></div>');
- this.dom('cameraButton').onclick=()=>{this.cam=this.cam==='chase'?'orbit':'chase';this.audio.select();this.toast('CAMERA • '+this.cam.toUpperCase());};
- this.dom('moveToggle').onclick=()=>{this.moveMode=!this.moveMode;this.movePlan=null;this.refreshMoveUi();};
- this.dom('moveConfirm').onclick=()=>this.confirmMove();
- this.dom('moveCancel').onclick=()=>{this.movePlan=null;this.refreshMoveUi();};
- let down=null;
- this.canvas.addEventListener('pointerdown',e=>down={id:e.pointerId,x:e.clientX,y:e.clientY});
- this.canvas.addEventListener('pointerup',e=>{
-  if(!down||down.id!==e.pointerId)return;
-  let distance=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
-  if(distance>9||!this.moveMode||this.mode!=='duel'||this.turn!=='player'||this.movingPath||this.paused)return;
-  let ground=this.pickGround(e.clientX,e.clientY);
-  if(ground)this.previewMove(ground[0],ground[2]);else this.toast('SELECT VISIBLE TERRAIN');
- });
- this.dom('radar').style.display='none';
-};
+// v0.3 uses the base game's input binding plus the direct tank-selection controller.
 Game.prototype.pickGround=function(px,py){
  if(!this.lastCamera)return null;
  let [eye,target]=this.lastCamera,forward=V3.norm(V3.sub(target,eye)),right=V3.norm(V3.cross(forward,[0,1,0])),up=V3.norm(V3.cross(right,forward)),rect=this.canvas.getBoundingClientRect();
@@ -580,16 +716,9 @@ Game.prototype.confirmMove=function(){
  this.movingPath={points:plan.points,next:1};this.movePlan=null;this.audio.select();this.refreshMoveUi();
 };
 Game.prototype.refreshMoveUi=function(){
- if(!this.dom('moveControls'))return;
  let active=this.mode==='duel'&&this.turn==='player'&&!this.paused;
- this.dom('hud').classList.toggle('classicMove',this.mode==='duel');
- this.dom('moveCredits').textContent=(this.moveCredits??6)+(this.movePlan?' (−'+this.movePlan.cost+')':'');
- this.dom('moveToggle').disabled=!active||!!this.movingPath||this.moveCredits<=0;
- this.dom('moveToggle').style.background=this.moveMode?'rgba(245,196,104,.28)':'rgba(8,28,37,.82)';
- this.dom('moveConfirm').disabled=!active||!this.movePlan||this.movePlan.cost>this.moveCredits||!!this.movingPath;
- this.dom('moveCancel').disabled=!active||!this.movePlan;
- this.dom('moveLeft').textContent=this.mode==='duel'?this.moveCredits:Math.ceil(this.moveLeft);
- this.dom('fire').disabled=!active||!!this.movingPath;
+ if(this.dom('moveLeft'))this.dom('moveLeft').textContent=this.moveCredits??6;
+ if(this.dom('fire'))this.dom('fire').disabled=!active||!!this.movingPath;
 };
 const OLD_START=Game.prototype.start;
 Game.prototype.start=function(mode){
@@ -599,8 +728,8 @@ Game.prototype.start=function(mode){
  this.navigator=new SurfaceNavigator(this.world);this.perception=new EnemyPerception();this.shellCamera=new ShellCamera();this.cinematics=new WeaponCinematics(this);
  this.moveCredits=MOVE_RULES.credits;this.enemyCredits=MOVE_RULES.credits;this.moveLeft=mode==='duel'?this.moveCredits:22;
  this.moveMode=mode==='duel';this.movePlan=null;this.movingPath=null;this.enemyPath=null;this.aiMoved=false;this.lastCamera=null;
- this.dom('radar').style.display='none';this.refreshMoveUi();
- this.banner(mode==='duel'?'DISCOVER • AIM • FIRE':'TERRAIN SANDBOX',mode==='duel'?'TAP GROUND TO PLAN • SIX MOVES PER MATCH':'DRIVE FREELY • AIM • FIRE',2.4);
+ this.refreshMoveUi();
+ this.banner('DISCOVER • AIM • FIRE','SIX MOVES PER MATCH',2.2);
 };
 const OLD_UI=Game.prototype.ui;
 Game.prototype.ui=function(){OLD_UI.call(this);if(this.moveCredits!==undefined&&this.mode==='duel')this.dom('moveLeft').textContent=this.moveCredits;};
@@ -628,7 +757,7 @@ Game.prototype.decideEnemy=function(){
  if(!this.aiMoved){
   this.aiMoved=true;
   if(this.enemyCredits>0&&Math.random()<.53){
-   const tx=clamp(e.x+(Math.random()-.5)*12,-48,48),tz=clamp(e.z+(Math.random()-.5)*12,-48,48),path=this.navigator.plan(e,tx,tz);
+   const tx=clamp(e.x+(Math.random()-.5)*5,-48,48),tz=clamp(e.z+(Math.random()-.5)*5,-48,48),path=this.navigator.plan(e,tx,tz);
    if(path&&path.cost>0&&path.cost<=Math.min(2,this.enemyCredits)){this.enemyCredits-=path.cost;this.enemyPath={points:path.points,next:1};return;}
   }
  }
@@ -703,6 +832,284 @@ Tank.prototype.updateHeight=function(dt,world){
  this.pitch=lerp(this.pitch,clamp(Math.atan2(back-fore,4),-.35,.35),1-Math.exp(-5*dt));
  this.roll=lerp(this.roll,clamp(Math.atan2(left-right,2.5),-.3,.3),1-Math.exp(-5*dt));
  this.recoil=Math.max(0,this.recoil-dt*2.7);this.damageGlow=Math.max(0,this.damageGlow-dt*2);
+};
+
+
+'use strict';
+// v0.3: camera-to-barrel aiming, direct tank selection, discrete movement and impact staging.
+const V03_MAX_STEP=MOVE_RULES.unit;
+const V03_PLAN=SurfaceNavigator.prototype.plan;
+SurfaceNavigator.prototype.plan=function(tank,x,z){
+ if(Math.hypot(x-tank.x,z-tank.z)>V03_MAX_STEP+1.25)return null;
+ let route=V03_PLAN.call(this,tank,x,z);
+ if(!route||route.length>V03_MAX_STEP+.06||route.points.length<2)return null;
+ route.cost=1; // One movement action, never distance-based multi-credit movement.
+ return route;
+};
+function v03Project(view,point,width,height){
+ if(!view)return null;
+ const [eye,target]=view;
+ const m=M4.mul(M4.perspective(Math.PI/3.05,width/height,.15,350),M4.look(eye,target));
+ const [x,y,z]=point,w=m[3]*x+m[7]*y+m[11]*z+m[15];
+ if(w<=.01)return null;
+ const nx=(m[0]*x+m[4]*y+m[8]*z+m[12])/w;
+ const ny=(m[1]*x+m[5]*y+m[9]*z+m[13])/w;
+ return [width*(nx*.5+.5),height*(.5-ny*.5)];
+}
+function v03WeaponArt(canvas,id){
+ if(!canvas)return;
+ const ctx=canvas.getContext('2d');if(!ctx)return;
+ const w=canvas.width,h=canvas.height;
+ ctx.clearRect(0,0,w,h);
+ const color={cannon:'#ffc76b',mega:'#ff693e',cluster:'#ffe78c',digger:'#b7a1ff',mountain:'#a9ef92',roller:'#65c7ff'}[id]||'#f8db8d';
+ ctx.save();ctx.translate(w*.5,h*.5);ctx.rotate(-.30);
+ const metal=ctx.createLinearGradient(-16,-12,16,12);
+ metal.addColorStop(0,'#a1c3b8');metal.addColorStop(.42,'#42555c');metal.addColorStop(1,'#1b2c36');
+ ctx.shadowColor=color;ctx.shadowBlur=9;
+ if(id==='cannon'||id==='mega'){
+  ctx.fillStyle=metal;ctx.fillRect(-8,-15,16,29);ctx.fillStyle=color;
+  ctx.beginPath();ctx.moveTo(-8,-15);ctx.lineTo(0,-27);ctx.lineTo(8,-15);ctx.closePath();ctx.fill();
+  ctx.fillStyle=id==='mega'?'#f15a3a':'#e2aa54';ctx.fillRect(-8,6,16,5);ctx.fillRect(-8,11,16,4);
+  if(id==='mega'){ctx.fillStyle='#ffe4a9';ctx.beginPath();ctx.arc(0,-14,5,0,6.28);ctx.fill();}
+ }else if(id==='cluster'){
+  ctx.fillStyle=metal;ctx.fillRect(-7,-17,14,32);ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-7,-17);ctx.lineTo(0,-24);ctx.lineTo(7,-17);ctx.fill();
+  for(let i=-1;i<=1;i++){ctx.save();ctx.translate(i*12,i%2?10:-1);ctx.fillStyle=i?'#eeb55b':'#ffeaa0';ctx.fillRect(-4,-5,8,12);ctx.restore();}
+ }else if(id==='digger'){
+  ctx.fillStyle=metal;ctx.fillRect(-9,-8,18,25);
+  for(let i=0;i<3;i++){ctx.fillStyle=i%2?'#c1adfc':'#7d5fbd';ctx.fillRect(-9,-7+i*8,18,3);}
+  ctx.fillStyle='#e5dbff';ctx.beginPath();ctx.moveTo(-9,-8);ctx.lineTo(0,-29);ctx.lineTo(9,-8);ctx.closePath();ctx.fill();
+ }else if(id==='mountain'){
+  ctx.fillStyle='#52725b';ctx.fillRect(-16,-10,32,26);
+  ctx.fillStyle=color;ctx.fillRect(-10,-22,20,19);ctx.fillStyle='#e0ffb6';ctx.fillRect(-4,-28,8,10);
+  ctx.strokeStyle='#d7ffb3';ctx.strokeRect(-13,-13,26,26);
+ }else if(id==='roller'){
+  const grad=ctx.createRadialGradient(-5,-6,2,0,0,23);grad.addColorStop(0,'#e7ffff');grad.addColorStop(.5,color);grad.addColorStop(1,'#234f76');
+  ctx.fillStyle=grad;ctx.beginPath();ctx.arc(0,0,20,0,6.283);ctx.fill();
+  ctx.strokeStyle='#e7fdff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,15,1.1,4.8);ctx.stroke();
+ }
+ ctx.restore();
+}
+const V03_BIND=Game.prototype.bind;
+Game.prototype.bind=function(){
+ V03_BIND.call(this);
+ // Legacy v0.2 controls remain inert for compatibility but are never visible.
+ const oldMove=this.dom('moveControls');if(oldMove)oldMove.style.display='none';
+ let panel=this.dom('weaponPanel'),toggle=this.dom('weaponToggle');
+ if(panel&&toggle){
+  toggle.onclick=()=>{if(this.mode==='menu')return;let open=panel.classList.toggle('expanded');toggle.setAttribute('aria-expanded',String(open));this.audio.select();};
+  const original=this.dom('weapons');
+  for(let i=0;i<original.children.length;i++){
+   let b=original.children[i],w=WEAPONS[i];
+   b.innerHTML='<canvas width="56" height="56" aria-hidden="true"></canvas><span class="weaponName">'+w.name+'</span>';
+   b.title=w.description;v03WeaponArt(b.querySelector('canvas'),w.id);
+  }
+  document.addEventListener('pointerdown',e=>{if(!panel.contains(e.target)){panel.classList.remove('expanded');toggle.setAttribute('aria-expanded','false');}});
+ }
+ let pressed=null;
+ this.canvas.addEventListener('pointerdown',e=>{pressed={id:e.pointerId,x:e.clientX,y:e.clientY};});
+ this.canvas.addEventListener('pointerup',e=>{
+  if(!pressed||pressed.id!==e.pointerId)return;
+  let drift=Math.hypot(e.clientX-pressed.x,e.clientY-pressed.y);pressed=null;
+  if(drift>10||this.mode!=='duel'||this.turn!=='player'||this.paused||this.movingPath)return;
+  if(this.isPlayerTankTap(e.clientX,e.clientY)){
+   this.tankSelected=!this.tankSelected&&this.moveCredits>0;
+   if(this.tankSelected)this.computeMovementHalo();
+   this.audio.select();
+   if(!this.tankSelected)this.movementHalo=[];
+   this.refreshMoveUi();return;
+  }
+  if(!this.tankSelected)return;
+  let hit=this.pickGround(e.clientX,e.clientY);
+  if(!hit){this.toast('NO VALID GROUND');return;}
+  let plan=this.navigator.plan(this.player,hit[0],hit[2]);
+  if(!plan){this.toast('TOO FAR OR BLOCKED');return;}
+  this.moveCredits--;this.moveLeft=this.moveCredits;
+  this.aimWorldHeading=this.player.aimYaw();
+  this.movingPath={points:plan.points,next:1};
+  this.tankSelected=false;this.movementHalo=[];
+  this.refreshMoveUi();this.audio.select();
+ });
+};
+Game.prototype.isPlayerTankTap=function(px,py){
+ if(!this.lastCamera)return false;
+ const rect=this.canvas.getBoundingClientRect(),w=rect.width,h=rect.height,p=this.player;
+ const corners=[];
+ for(let dx of [-1.6,1.6])for(let dz of [-2.3,2.3])for(let dy of [.2,2.95]){
+  const a=p.yaw,x=p.x+Math.cos(a)*dx+Math.sin(a)*dz,z=p.z-Math.sin(a)*dx+Math.cos(a)*dz;
+  let proj=v03Project(this.lastCamera,[x,p.y+dy,z],w,h);
+  if(proj)corners.push(proj);
+ }
+ if(!corners.length)return false;
+ let minx=Math.min(...corners.map(c=>c[0]))-14,maxx=Math.max(...corners.map(c=>c[0]))+14;
+ let miny=Math.min(...corners.map(c=>c[1]))-15,maxy=Math.max(...corners.map(c=>c[1]))+16;
+ return px-rect.left>=minx&&px-rect.left<=maxx&&py-rect.top>=miny&&py-rect.top<=maxy;
+};
+Game.prototype.computeMovementHalo=function(){
+ this.movementHalo=[];
+ let t=this.player;
+ for(let i=0;i<24;i++){
+  let a=i*Math.PI*2/24,x=t.x+Math.sin(a)*V03_MAX_STEP*.86,z=t.z+Math.cos(a)*V03_MAX_STEP*.86;
+  let plan=this.navigator.plan(t,x,z);
+  if(plan){let p=plan.points[plan.points.length-1];this.movementHalo.push([p[0],p[1]+.32,p[2]]);}
+ }
+};
+Game.prototype.handleSceneDrag=function(dx,dy){
+ if(this.paused||this.mode==='menu'||this.projectiles.length||this.turn==='flying')return;
+ this.orbit+=dx*.007;
+ this.aimPitch=clamp((this.aimPitch??this.player.elev)-dy*.006,.14,1.41);
+ if(this.mode==='duel'&&this.turn==='player'&&!this.tankSelected&&!this.movingPath){
+  this.player.turret=this.orbit;this.player.elev=this.aimPitch;this.updateAimText();
+ }
+};
+const V03_START=Game.prototype.start;
+Game.prototype.start=function(mode){
+ V03_START.call(this,mode);
+ this.moveMode=false;this.movePlan=null;this.movingPath=null;this.tankSelected=false;this.movementHalo=[];this.aimWorldHeading=null;this.debrisCloud=[];this.healthRayCache=null;
+ this.orbit=this.player.turret;this.aimPitch=this.player.elev;this.moveCredits=6;this.enemyCredits=6;
+ if(this.dom('weaponPanel'))this.dom('weaponPanel').classList.remove('expanded');
+ if(this.dom('weaponToggle'))this.dom('weaponToggle').setAttribute('aria-expanded','false');
+ this.refreshMoveUi();this.pickWeapon(0);
+ this.banner('TAP YOUR TANK TO MOVE','SIX MOVES • DRAG TO AIM • FIRE',2.5);
+};
+const V03_VOLLEY=Game.prototype.afterVolley;
+Game.prototype.afterVolley=function(){
+ V03_VOLLEY.call(this);
+ this.moveMode=false;this.tankSelected=false;this.movementHalo=[];
+ this.refreshMoveUi();
+};
+const V03_PICK=Game.prototype.pickWeapon;
+Game.prototype.pickWeapon=function(i){
+ V03_PICK.call(this,i);
+ let w=WEAPONS[i];
+ if(this.dom('activeWeaponArt'))v03WeaponArt(this.dom('activeWeaponArt'),w.id);
+ if(this.dom('weaponPanel'))this.dom('weaponPanel').classList.remove('expanded');
+ if(this.dom('weaponToggle'))this.dom('weaponToggle').setAttribute('aria-expanded','false');
+};
+const V03_MOVE_UI=Game.prototype.refreshMoveUi;
+Game.prototype.refreshMoveUi=function(){
+ V03_MOVE_UI.call(this);
+ let indicator=this.dom('moveTokens');
+ if(indicator)indicator.innerHTML=Array.from({length:6},(_,i)=>'<span class="'+(i<(this.moveCredits??6)?'ready':'spent')+'"></span>').join('');
+ if(this.dom('moveControls'))this.dom('moveControls').style.display='none';
+ if(this.dom('hud'))this.dom('hud').classList.toggle('selectedTank',!!this.tankSelected);
+ if(this.dom('moveLeft'))this.dom('moveLeft').textContent=this.moveCredits??6;
+};
+const V03_UPDATE=Game.prototype.update;
+Game.prototype.update=function(dt){
+ const wasMoving=!!this.movingPath;
+ V03_UPDATE.call(this,dt);
+ if(this.world.tickDestruction)this.world.tickDestruction(dt);
+ if(this.world.debrisEvents&&this.world.debrisEvents.length){
+  if(!this.debrisCloud)this.debrisCloud=[];
+  const events=this.world.debrisEvents.splice(0,12);
+  for(let e of events){
+   const n=e.kind==='tree'?21:e.kind==='ruin'?32:14;
+   for(let i=0;i<n;i++){
+    let a=Math.random()*Math.PI*2,spd=(e.kind==='tree'?4:7)+Math.random()*8;
+    if(this.debrisCloud.length>185)this.debrisCloud.shift();
+    this.debrisCloud.push({
+     pos:[e.x+(Math.random()-.5),e.y+(Math.random()-.5),e.z+(Math.random()-.5)],
+     vel:[Math.sin(a)*spd,4+Math.random()*12,Math.cos(a)*spd],time:0,
+     life:1.0+Math.random()*1.1,size:e.kind==='tree'?.19+Math.random()*.25:.26+Math.random()*.35,
+     color:e.kind==='tree'?(Math.random()<.6?[.26,.49,.22]:[.42,.30,.20]):[.56,.53,.45]
+    });
+   }
+  }
+ }
+ if(wasMoving&&this.aimWorldHeading!==null){
+  this.orbit=this.aimWorldHeading-this.player.yaw;
+  this.player.turret=this.orbit;
+  if(!this.movingPath)this.aimWorldHeading=null;
+ }
+ if(this.debrisCloud){
+  for(let j=this.debrisCloud.length-1;j>=0;j--){
+   let d=this.debrisCloud[j];d.time+=dt;
+   d.vel[1]-=20*dt;d.pos=V3.add(d.pos,V3.mul(d.vel,dt));
+   if(d.pos[1]<this.world.height(d.pos[0],d.pos[2])+.1){d.pos[1]=this.world.height(d.pos[0],d.pos[2])+.1;d.vel=V3.mul(d.vel,.24);}
+   if(d.time>d.life)this.debrisCloud.splice(j,1);
+  }
+ }
+};
+Game.prototype.camera=function(){
+ let p=this.player,eye,target;
+ if(this.mode==='menu'){
+  let a=this.time*.12+.7,d=23;target=[p.x,p.y+2.5,p.z];eye=[p.x+Math.sin(a)*d,p.y+12,p.z+Math.cos(a)*d];
+ }else{
+  let shot=this.shellCamera&&this.shellCamera.pose(this.projectiles,this.world);
+  if(shot)[eye,target]=shot;
+  else{
+   let a=p.yaw+this.orbit,pitch=clamp(this.aimPitch??p.elev,.14,1.41),distance=(this.cam==='orbit'?22:15)*this.zoom;
+   let camH=6+Math.sin(pitch)*4.1,lookAhead=8;
+   eye=[p.x-Math.sin(a)*distance,p.y+camH,p.z-Math.cos(a)*distance];
+   target=[p.x+Math.sin(a)*lookAhead,p.y+1.4+Math.sin(pitch)*8,p.z+Math.cos(a)*lookAhead];
+  }
+ }
+ const factor=this.mode==='menu'?.05:this.projectiles.length?.26:.14;
+ this.cameraPos=this.cameraPos.map((x,i)=>lerp(x,eye[i],factor));
+ this.cameraTarget=this.cameraTarget.map((x,i)=>lerp(x,target[i],this.projectiles.length?.3:.2));
+ this.lastCamera=[this.cameraPos.slice(),this.cameraTarget.slice()];
+ return [this.cameraPos.map(x=>x+(Math.random()-.5)*this.shake),this.cameraTarget];
+};
+const V03_DRAW=Game.prototype.draw;
+Game.prototype.draw=function(now){
+ V03_DRAW.call(this,now);
+ if(this.mode==='duel'&&this.tankSelected&&this.turn==='player'&&!this.movingPath){
+  for(let p of this.movementHalo||[])this.r.cube(p,[.23,.09,.23],[.98,.78,.37]);
+  for(let i=0;i<24;i++){
+   let a=i*Math.PI*2/24,t=this.player;
+   let px=t.x+Math.cos(a)*2.9,pz=t.z+Math.sin(a)*2.9;
+   this.r.cube([px,t.y+.12,pz],[.18,.12,.18],[.96,.78,.31]);
+  }
+ }
+ for(let d of this.debrisCloud||[]){
+  let a=clamp((d.life-d.time)/d.life,.1,1),size=d.size*(.8+.2*a);
+  this.r.cube(d.pos,[size,size,size],d.color,null,a);
+ }
+ this.drawTankHealthBars();
+};
+Game.prototype.spawnCratersideDebris=function(p,pos,rad,removed){
+ if(!removed||rad<.8)return;
+ if(!this.debrisCloud)this.debrisCloud=[];
+ let count=Math.min(95,Math.ceil(Math.sqrt(removed)*3+rad*5));
+ for(let i=0;i<count;i++){
+  let a=Math.random()*6.283,up=5+Math.random()*8,spd=4+rad*2+Math.random()*7,material=this.world.at(pos[0],Math.max(1,pos[1]-1),pos[2]);
+  let c=material===3?[.43,.46,.46]:material===4?[.76,.62,.37]:Math.random()<.3?[.49,.35,.22]:[.64,.52,.33];
+  if(this.debrisCloud.length>185)this.debrisCloud.shift();
+  this.debrisCloud.push({pos:[...pos],vel:[Math.sin(a)*spd,up+Math.random()*7,Math.cos(a)*spd],time:0,life:.85+Math.random()*1.1,size:.18+Math.random()*.42,color:c});
+ }
+};
+
+Game.prototype.cameraSeesTank=function(tank){
+ if(!this.lastCamera)return false;
+ let eye=this.lastCamera[0],target=[tank.x,tank.y+2.3,tank.z];
+ let delta=V3.sub(target,eye),length=V3.len(delta);
+ let steps=Math.ceil(length/.85);
+ for(let i=1;i<steps-2;i++){
+  let pt=V3.add(eye,V3.mul(delta,i/steps));
+  if(this.world.solid(...pt))return false;
+  if(i%3===0&&this.world.propHit&&this.world.propHit(...pt))return false;
+ }
+ return true;
+};
+Game.prototype.drawTankHealthBars=function(){
+ if(this.mode==='menu')return;
+ const rect=this.canvas.getBoundingClientRect(),w=rect.width,h=rect.height;
+ if(this.healthRayCache===null||!this.healthRayCache||this.time-this.healthRayCache.time>.12){
+  this.healthRayCache={time:this.time,player:this.cameraSeesTank(this.player),enemy:this.cameraSeesTank(this.enemy)};
+ }
+ for(let [tank,id,visible] of [
+  [this.player,'playerTankHealth',this.healthRayCache.player],
+  [this.enemy,'enemyTankHealth',this.healthRayCache.enemy]
+ ]){
+  let element=this.dom(id);if(!element)continue;
+  let projection=v03Project(this.lastCamera,[tank.x,tank.y+4.15,tank.z],w,h);
+  let onscreen=!!(projection&&projection[0]>12&&projection[0]<w-12&&projection[1]>14&&projection[1]<h-12);
+  element.style.opacity=(onscreen&&visible)?'1':'0';
+  if(!onscreen||!visible)continue;
+  element.style.left=Math.round(projection[0]+rect.left)+'px';
+  element.style.top=Math.round(projection[1]+rect.top)+'px';
+  element.firstElementChild.style.width=clamp(tank.hp,0,100)+'%';
+ }
 };
 
 </script>
