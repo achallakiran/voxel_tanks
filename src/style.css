@@ -60,3 +60,14 @@ h1 em{display:block;color:var(--gold);font-style:normal}
 @media (max-width:720px){.hudTop{gap:5px}.stat{min-width:88px;padding:6px 7px}.stat .name{font-size:8px}.stat .val{font-size:14px}.centerTop{font-size:9px;padding:7px}.actionsTop .iconButton{min-width:31px;min-height:33px;font-size:15px}.aimPanel{width:31vw;min-width:170px;padding:8px}.aimPair{gap:3px;margin:4px 0}.aimPair label{width:30px;font-size:8px}.aimPair output{min-width:28px;font-size:10px}.weaponPanel{min-width:0;padding:8px 6px}.weaponPick{flex-basis:45px;height:44px}.weaponPick span{font-size:19px}.weaponPick small{font-size:7px}.fireButton{height:76px;min-width:77px;font-size:17px;border-radius:16px}#bottom{gap:5px}#joyBase{bottom:123px;left:16px;width:89px;height:89px}#joyKnob{left:26px;top:26px;width:35px;height:35px}#radar{display:none}}
 @media (orientation:portrait) and (max-width:770px){#rotate{display:grid}}
 @media (max-height:370px){#bottom{bottom:4px}.aimPanel{padding:5px}.weaponPanel{padding:4px}.weaponHead{display:none}.fireButton{height:67px}.hudTop{top:3px}.stat{padding:3px 6px}.health{height:3px}#joyBase{bottom:89px}}
+
+/* v0.2 — route planning controls; no omniscient enemy map. */
+#radar{display:none!important}
+#hud.classicMove #joyBase{display:none!important}
+#moveControls{display:none;position:absolute;left:max(14px,env(safe-area-inset-left));bottom:max(119px,calc(env(safe-area-inset-bottom) + 112px));gap:7px;align-items:center;pointer-events:auto;background:rgba(8,24,31,.82);border:1px solid var(--line);border-radius:13px;padding:6px 8px;backdrop-filter:blur(12px)}
+#hud.classicMove #moveControls{display:flex}
+#moveControls b{font-size:19px;font-variant-numeric:tabular-nums;color:var(--gold);min-width:22px;text-align:center}
+#moveControls .iconButton{min-width:37px;min-height:37px}
+#moveControls button:disabled{opacity:.28}
+@media(max-width:720px){#moveControls{bottom:104px;left:12px;padding:4px;gap:4px}#moveControls .iconButton{min-width:31px;min-height:31px;font-size:17px}#moveControls b{font-size:15px}}
+@media(max-height:370px){#moveControls{bottom:83px}}
