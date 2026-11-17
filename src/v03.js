@@ -75,13 +75,14 @@ Game.prototype.bind=function(){
   let drift=Math.hypot(e.clientX-pressed.x,e.clientY-pressed.y);pressed=null;
   if(drift>10||this.mode!=='duel'||this.turn!=='player'||this.paused||this.movingPath)return;
   if(this.isPlayerTankTap(e.clientX,e.clientY)){
-   this.tankSelected=!this.tankSelected&&this.moveCredits>0;
-   if(this.tankSelected)this.computeMovementHalo();
+   this.tankSelected=!this.tankSelected;
+   if(this.tankSelected&&this.moveCredits>0)this.computeMovementHalo();
    this.audio.select();
    if(!this.tankSelected)this.movementHalo=[];
    this.refreshMoveUi();return;
   }
   if(!this.tankSelected)return;
+  if(this.moveCredits<=0){this.toast('NO MOVES LEFT');return;}
   let hit=this.pickGround(e.clientX,e.clientY);
   if(!hit){this.toast('NO VALID GROUND');return;}
   let plan=this.navigator.plan(this.player,hit[0],hit[2]);
@@ -116,14 +117,8 @@ Game.prototype.computeMovementHalo=function(){
   if(plan){let p=plan.points[plan.points.length-1];this.movementHalo.push([p[0],p[1]+.32,p[2]]);}
  }
 };
-Game.prototype.handleSceneDrag=function(dx,dy){
- if(this.paused||this.mode==='menu'||this.projectiles.length||this.turn==='flying')return;
- this.orbit+=dx*.007;
- this.aimPitch=clamp((this.aimPitch??this.player.elev)-dy*.006,.14,1.41);
- if(this.mode==='duel'&&this.turn==='player'&&!this.tankSelected&&!this.movingPath){
-  this.player.turret=this.orbit;this.player.elev=this.aimPitch;this.updateAimText();
- }
-};
+// Camera drags must not change artillery aim. Precise on-tank arrows own the controls.
+Game.prototype.handleSceneDrag=function(){};
 const V03_START=Game.prototype.start;
 Game.prototype.start=function(mode){
  V03_START.call(this,mode);
