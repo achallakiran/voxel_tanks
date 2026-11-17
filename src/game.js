@@ -19,20 +19,67 @@ class AudioFX{
 class Game{
  constructor(){this.canvas=document.getElementById('viewport');this.r=new Renderer(this.canvas);this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.audio=new AudioFX();this.mode='menu';this.turn='menu';this.cam='chase';this.cameraPos=[-42,28,-36];this.cameraTarget=[-30,10,-15];this.orbit=0;this.zoom=1;this.wind=0;this.selected=0;this.round=1;this.maxRounds=10;this.moveLeft=21;this.projectiles=[];this.fx=[];this.keys={};this.joy={x:0,y:0};this.time=0;this.prev=performance.now();this.stepAcc=0;this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.paused=false;this.aims=0;this.messageTimer=0;this.shake=0;this.settings={quality:1,difficulty:'normal',invert:false};this.bind();this.ui();requestAnimationFrame(t=>this.frame(t))}
  dom(id){return document.getElementById(id)}
- bind(){this.dom('startDuel').onclick=()=>this.start('duel');this.dom('startSandbox').onclick=()=>this.start('sandbox');this.dom('fire').onclick=()=>this.fire();this.dom('cameraButton').onclick=()=>{this.cam=this.cam==='chase'?'strategy':this.cam==='strategy'?'orbit':'chase';this.audio.select();this.toast('CAMERA  •  '+this.cam.toUpperCase())};this.dom('settingsButton').onclick=()=>this.openPanel();this.dom('pauseButton').onclick=()=>this.openPanel();this.dom('menuSettings').onclick=()=>this.openPanel();this.dom('closePanel').onclick=()=>this.closePanel();this.dom('restartButton').onclick=()=>{this.closePanel();this.start(this.mode==='menu'?'duel':this.mode)};this.dom('quitButton').onclick=()=>{this.closePanel();this.mode='menu';this.turn='menu';this.dom('menu').classList.remove('hidden');this.dom('hud').classList.remove('active')};this.dom('quality').onchange=e=>{this.r.quality=Number(e.target.value)};this.dom('volume').oninput=e=>{this.audio.volume=Number(e.target.value)};this.dom('difficulty').onchange=e=>this.settings.difficulty=e.target.value;this.dom('invert').onchange=e=>this.settings.invert=e.target.checked;
-  for(let [id,prop,min,max] of [['bearing','turret',-180,180],['angle','elev',8,82],['power','power',22,75]]){let el=this.dom(id);el.addEventListener('input',()=>{let n=Number(el.value);if(prop==='turret')this.player.turret=n*Math.PI/180;else if(prop==='elev')this.player.elev=n*Math.PI/180;else this.player.power=n;this.updateAimText()})}
-  this.dom('weapons').innerHTML='';for(let i=0;i<WEAPONS.length;i++){let w=WEAPONS[i],b=document.createElement('button');b.className='weaponPick';b.title=w.description;b.innerHTML='<span>'+w.icon+'</span><small>'+w.name+'</small>';b.onclick=()=>this.pickWeapon(i);this.dom('weapons').appendChild(b)}
-  this.bindJoystick();window.addEventListener('keydown',e=>{if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();this.keys[e.code]=true;if(e.repeat)return;if(e.code==='Space')this.fire();if(e.code==='KeyC')this.dom('cameraButton').click();if(e.code==='Escape')this.openPanel();if(/^Digit[1-6]$/.test(e.code))this.pickWeapon(Number(e.code.slice(-1))-1)});window.addEventListener('keyup',e=>this.keys[e.code]=false);
-  let pointer=null;this.canvas.addEventListener('pointerdown',e=>{pointer={id:e.pointerId,x:e.clientX,y:e.clientY};try{this.canvas.setPointerCapture(e.pointerId)}catch(x){}});this.canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;let dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;pointer.x=e.clientX;pointer.y=e.clientY;this.orbit+=dx*.008;this.zoom=clamp(this.zoom+dy*.003,.6,1.8)});this.canvas.addEventListener('pointerup',()=>pointer=null);this.canvas.addEventListener('pointercancel',()=>pointer=null);this.canvas.addEventListener('wheel',e=>{this.zoom=clamp(this.zoom+Math.sign(e.deltaY)*.085,.6,1.8)},{passive:true});window.addEventListener('blur',()=>{this.keys={};this.joy={x:0,y:0}});this.pickWeapon(0)}
- bindJoystick(){let base=this.dom('joyBase'),knob=this.dom('joyKnob'),held=null;let move=e=>{let b=base.getBoundingClientRect(),x=e.clientX-(b.left+b.width/2),y=e.clientY-(b.top+b.height/2),radius=b.width*.34,mag=Math.hypot(x,y),mul=Math.min(1,radius/(mag||1));x*=mul;y*=mul;this.joy.x=x/radius;this.joy.y=-y/radius;knob.style.transform='translate('+x+'px,'+y+'px)'};base.addEventListener('pointerdown',e=>{e.preventDefault();held=e.pointerId;base.setPointerCapture(e.pointerId);move(e)});base.addEventListener('pointermove',e=>{if(e.pointerId===held){e.preventDefault();move(e)}});let release=e=>{if(e.pointerId!==held)return;held=null;this.joy={x:0,y:0};knob.style.transform='translate(0,0)'};base.addEventListener('pointerup',release);base.addEventListener('pointercancel',release)}
- updateAimText(){this.dom('bearingValue').textContent=Math.round(this.player.turret*180/Math.PI)+'°';this.dom('angleValue').textContent=Math.round(this.player.elev*180/Math.PI)+'°';this.dom('powerValue').textContent=Math.round(this.player.power)+'%'}
- pickWeapon(i){this.selected=i;let children=this.dom('weapons').children;for(let j=0;j<children.length;j++)children[j].classList.toggle('selected',i===j);this.dom('weaponLabel').textContent=WEAPONS[i].name.toUpperCase();if(this.audio)this.audio.select()}
- ui(){this.dom('bearing').value=Math.round(this.player.turret*180/Math.PI);this.dom('angle').value=Math.round(this.player.elev*180/Math.PI);this.dom('power').value=this.player.power;this.updateAimText();this.dom('youHp').textContent=Math.ceil(this.player.hp);this.dom('enemyHp').textContent=Math.ceil(this.enemy.hp);this.dom('youHealth').style.width=this.player.hp+'%';this.dom('enemyHealth').style.width=this.enemy.hp+'%';this.dom('youScore').textContent=this.player.score;this.dom('enemyScore').textContent=this.enemy.score;this.dom('round').textContent=this.mode==='sandbox'?'SANDBOX':'ROUND '+this.round+'/'+this.maxRounds;this.dom('wind').textContent='WIND '+(this.wind>0?'→ ':this.wind<0?'← ':'· ')+Math.abs(this.wind).toFixed(1);let active=this.turn==='player'&&this.mode!=='menu'&&!this.paused;this.dom('fire').disabled=!active;this.dom('fire').textContent=this.mode==='sandbox'?'FIRE':'FIRE';this.dom('moveLeft').textContent=Math.ceil(this.moveLeft)}
- toast(s){let el=this.dom('toast');el.textContent=s;el.classList.add('show');clearTimeout(this.toastHandle);this.toastHandle=setTimeout(()=>el.classList.remove('show'),2100)}
+bind(){
+ const get=id=>this.dom(id);
+ get('startDuel').onclick=()=>this.start('duel');
+ get('fire').onclick=()=>this.fire();
+ get('pauseButton').onclick=()=>this.openPanel();
+ get('closePanel').onclick=()=>this.closePanel();
+ get('restartButton').onclick=()=>{this.closePanel();this.start('duel');};
+ get('quitButton').onclick=()=>{this.closePanel();this.mode='menu';this.turn='menu';get('menu').classList.remove('hidden');get('hud').classList.remove('active');};
+ get('quality').onchange=e=>this.r.quality=Number(e.target.value);
+ get('volume').oninput=e=>this.audio.volume=Number(e.target.value);
+ get('difficulty').onchange=e=>this.settings.difficulty=e.target.value;
+ get('power').addEventListener('input',()=>{this.player.power=Number(get('power').value);this.updateAimText();});
+ get('weapons').innerHTML='';
+ for(let i=0;i<WEAPONS.length;i++){
+  let w=WEAPONS[i],b=document.createElement('button');
+  b.className='weaponPick';b.title=w.description;b.innerHTML='<span>'+w.icon+'</span><small>'+w.name+'</small>';
+  b.onclick=()=>this.pickWeapon(i);get('weapons').appendChild(b);
+ }
+ window.addEventListener('keydown',e=>{
+  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
+  this.keys[e.code]=true;
+  if(e.repeat)return;
+  if(e.code==='Space')this.fire();
+  if(e.code==='Escape'){if(get('panel').classList.contains('open'))this.closePanel();else this.openPanel();}
+  if(/^Digit[1-6]$/.test(e.code))this.pickWeapon(Number(e.code.slice(-1))-1);
+ });
+ window.addEventListener('keyup',e=>this.keys[e.code]=false);
+ let pointer=null;
+ this.canvas.addEventListener('pointerdown',e=>{pointer={id:e.pointerId,x:e.clientX,y:e.clientY};try{this.canvas.setPointerCapture(e.pointerId)}catch(x){}});
+ this.canvas.addEventListener('pointermove',e=>{
+  if(!pointer||pointer.id!==e.pointerId)return;
+  let dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;
+  pointer.x=e.clientX;pointer.y=e.clientY;
+  if(this.handleSceneDrag)this.handleSceneDrag(dx,dy);
+  else{this.orbit+=dx*.008;this.zoom=clamp(this.zoom+dy*.003,.6,1.8);}
+ });
+ this.canvas.addEventListener('pointerup',()=>pointer=null);
+ this.canvas.addEventListener('pointercancel',()=>pointer=null);
+ this.canvas.addEventListener('wheel',e=>{this.zoom=clamp(this.zoom+Math.sign(e.deltaY)*.085,.6,1.8)},{passive:true});
+ window.addEventListener('blur',()=>{this.keys={};this.joy={x:0,y:0};});
+ this.pickWeapon(0);
+}
+  bindJoystick(){let base=this.dom('joyBase'),knob=this.dom('joyKnob'),held=null;let move=e=>{let b=base.getBoundingClientRect(),x=e.clientX-(b.left+b.width/2),y=e.clientY-(b.top+b.height/2),radius=b.width*.34,mag=Math.hypot(x,y),mul=Math.min(1,radius/(mag||1));x*=mul;y*=mul;this.joy.x=x/radius;this.joy.y=-y/radius;knob.style.transform='translate('+x+'px,'+y+'px)'};base.addEventListener('pointerdown',e=>{e.preventDefault();held=e.pointerId;base.setPointerCapture(e.pointerId);move(e)});base.addEventListener('pointermove',e=>{if(e.pointerId===held){e.preventDefault();move(e)}});let release=e=>{if(e.pointerId!==held)return;held=null;this.joy={x:0,y:0};knob.style.transform='translate(0,0)'};base.addEventListener('pointerup',release);base.addEventListener('pointercancel',release)}
+updateAimText(){
+  const power=this.dom('powerValue');
+  if(power)power.textContent=Math.round(this.player.power)+'%';
+}
+  pickWeapon(i){this.selected=i;let children=this.dom('weapons').children;for(let j=0;j<children.length;j++)children[j].classList.toggle('selected',i===j);this.dom('weaponLabel').textContent=WEAPONS[i].name.toUpperCase();if(this.audio)this.audio.select()}
+ui(){
+ this.dom('power').value=this.player.power;
+ this.updateAimText();
+ this.dom('round').textContent='ROUND '+this.round+'/'+this.maxRounds;
+ this.dom('wind').textContent='WIND '+(this.wind>0?'→ ':this.wind<0?'← ':'· ')+Math.abs(this.wind).toFixed(1);
+ this.dom('fire').disabled=!(this.turn==='player'&&this.mode==='duel'&&!this.paused);
+ this.dom('moveLeft').textContent=Math.ceil(this.moveLeft);
+}
+  toast(s){let el=this.dom('toast');el.textContent=s;el.classList.add('show');clearTimeout(this.toastHandle);this.toastHandle=setTimeout(()=>el.classList.remove('show'),2100)}
  banner(s,sub='',duration=1.7){this.dom('message').textContent=s;this.dom('subMessage').textContent=sub;this.dom('message').style.opacity=1;this.dom('subMessage').style.opacity=1;this.messageTimer=duration}
  openPanel(){this.paused=true;this.dom('panel').classList.add('open')}
  closePanel(){this.dom('panel').classList.remove('open');this.paused=false;this.prev=performance.now()}
- start(mode){this.audio.wake();this.mode=mode;this.turn='player';this.paused=false;this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.wind=(Math.random()-.5)*3.4;this.round=1;this.selected=0;this.moveLeft=22;this.projectiles=[];this.fx=[];this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.cam='chase';this.orbit=0;this.dom('menu').classList.add('hidden');this.dom('hud').classList.add('active');this.pickWeapon(0);this.ui();this.banner(mode==='sandbox'?'TERRAIN SANDBOX':'BATTLE START','W · A · S · D TO DRIVE  •  AIM & FIRE',2.5)}
+ start(mode){this.audio.wake();mode='duel';this.mode=mode;this.turn='player';this.paused=false;this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.wind=(Math.random()-.5)*3.4;this.round=1;this.selected=0;this.moveLeft=22;this.projectiles=[];this.fx=[];this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.cam='chase';this.orbit=0;this.dom('menu').classList.add('hidden');this.dom('hud').classList.add('active');this.pickWeapon(0);this.ui();this.banner(mode==='sandbox'?'TERRAIN SANDBOX':'BATTLE START','W · A · S · D TO DRIVE  •  AIM & FIRE',2.5)}
  fire(){if(this.turn!=='player'||this.paused)return;this.launch(this.player,WEAPONS[this.selected]);if(this.mode!=='sandbox'){this.turn='flying';this.shooter='player';this.ui()}else{this.shooter='sandbox';this.moveLeft=22;this.ui()}}
  launch(t,w){let dir=t.direction(),pos=t.muzzle(),speed=t.power*.94;this.projectiles.push({pos,vel:V3.mul(dir,speed),w,owner:t,age:0,life:0,bounce:0,trail:[],frag:false});t.recoil=1;this.audio.shot();this.shake=.15;this.banner(w.name.toUpperCase(),'INCOMING',.55)}
  spawnFX(pos,col,n=42,energy=10){for(let i=0;i<n;i++){if(this.fx.length>260)this.fx.shift();let a=Math.random()*6.283,up=Math.random(),dir=[Math.cos(a)*Math.sqrt(1-up*up),up,Math.sin(a)*Math.sqrt(1-up*up)];this.fx.push({pos:[...pos],vel:V3.mul(dir,energy*(.3+.8*Math.random())),color:col,size:.11+Math.random()*.35,life:.5+Math.random()*1.05,max:1.5})}}
@@ -40,12 +87,12 @@ class Game{
  damage(center,rad,damage,owner){for(let t of [this.player,this.enemy]){let d=V3.len(V3.sub(t.position(),center));let hit=clamp(1-d/(rad+2.4),0,1);if(!hit)continue;let dealt=t.applyDamage(damage*hit);if(owner&&owner!==t)owner.score+=Math.round(dealt*1.5);if(dealt>5){this.spawnFX(t.position(),[1,.45,.18],12,6);this.audio.hit()}this.ui()}}
  impact(p,pos){let w=p.w;this.audio.blast(w.radius/4);this.shake=clamp(this.shake+w.radius*.045,0,.9);if(w.id==='cluster'&&!p.frag){this.burstCluster(p);return}let rad=p.frag?2.25:w.radius;if(w.id==='mountain'){let m=this.world.mountain(pos[0],pos[1],pos[2],rad);this.spawnFX(pos,[.64,.97,.48],38,9);this.damage(pos,rad,4,p.owner);this.banner('TERRAIN RAISED','+'+m+' VOXELS',.9)}
  else if(w.id==='digger'){let dir=V3.norm([p.vel[0],-.2,p.vel[2]]),end=V3.add(pos,V3.mul(dir,13));let n=this.world.tunnel(pos,end,rad);this.world.settle(pos[0],pos[1],pos[2],rad+4);this.spawnFX(pos,w.col,55,12);this.spawnFX(end,w.col,35,6);this.damage(pos,rad+3,w.damage,p.owner);this.banner('TUNNEL CUT','−'+n+' VOXELS',.85)}
- else{let removed=this.world.editSphere(...pos,rad,0);if(rad>3)this.world.settle(...pos,rad+2);this.spawnFX(pos,w.col,Math.floor(20+rad*11),8+rad*1.5);this.spawnFX(pos,[.48,.45,.4],26,6);this.damage(pos,rad,p.frag?21:w.damage,p.owner);if(w.id==='mega')this.banner('MEGA IMPACT','−'+removed+' VOXELS',1.05)}
+ else{let removed=this.world.editSphere(...pos,rad,0);if(rad>3)this.world.settle(...pos,rad+2);if(this.world.queueEjecta)this.world.queueEjecta(...pos,rad,removed);if(this.spawnCratersideDebris)this.spawnCratersideDebris(p,pos,rad,removed);this.spawnFX(pos,w.col,Math.floor(20+rad*11),8+rad*1.5);this.spawnFX(pos,[.48,.45,.4],26,6);this.damage(pos,rad,p.frag?21:w.damage,p.owner);if(w.id==='mega')this.banner('MEGA IMPACT','−'+removed+' VOXELS',1.05)}
  this.player.updateHeight(.02,this.world);this.enemy.updateHeight(.02,this.world);
  }
  stepProjectiles(dt){let list=this.projectiles;for(let i=list.length-1;i>=0;i--){let p=list[i];p.age+=dt;if(p.w.id==='cluster'&&!p.frag&&p.age>1.25){list.splice(i,1);this.burstCluster(p);continue}
  p.vel[0]+=this.wind*.36*dt;p.vel[1]-=21*dt;p.pos=V3.add(p.pos,V3.mul(p.vel,dt));if(p.age%0.11<dt)p.trail.unshift([...p.pos]);if(p.trail.length>11)p.trail.pop();
- let collision=this.world.solid(...p.pos);if(p.age>.32&&[this.player,this.enemy].some(t=>V3.len(V3.sub(p.pos,t.position()))<1.9))collision=true;
+ let collision=this.world.solid(...p.pos);if(this.world.propHit&&this.world.propHit(...p.pos))collision=true;if(p.age>.32&&[this.player,this.enemy].some(t=>V3.len(V3.sub(p.pos,t.position()))<1.9))collision=true;
  if(p.pos[1]<-1||p.pos[1]>100||Math.abs(p.pos[0])>56||Math.abs(p.pos[2])>56||p.age>9)collision=true;
  if(collision){if(p.w.id==='roller'&&p.bounce<4&&p.age<5){p.bounce++;p.vel[0]*=.78;p.vel[2]*=.78;p.vel[1]=p.bounce<3?6:3;let ground=this.world.height(p.pos[0],p.pos[2]);p.pos[1]=Math.max(p.pos[1],ground+1.3);this.spawnFX(p.pos,p.w.col,8,3);this.audio.tone(270,.10,'triangle',.13,-50);continue}
  list.splice(i,1);let ground=this.world.height(p.pos[0],p.pos[2]);this.impact(p,[clamp(p.pos[0],-54,54),clamp(p.pos[1],Math.max(1,ground-3),37),clamp(p.pos[2],-54,54)])}
@@ -61,8 +108,18 @@ class Game{
  let difficulty=this.settings.difficulty,spread=difficulty==='easy'?.14:difficulty==='hard'?.015:difficulty==='expert'?.004:.055;e.turret=best.yaw-e.yaw+(Math.random()-.5)*spread;e.elev=best.elev+(Math.random()-.5)*spread*.6;e.power=best.power+(Math.random()-.5)*spread*22;
  this.banner('ENEMY FIRING',w.name.toUpperCase(),.85);this.launch(e,w);this.turn='flying';this.shooter='enemy';this.ui()}
  afterVolley(){this.resolveTimer=-1;if(this.player.hp<=0||this.enemy.hp<=0){this.finish();return}if(this.shooter==='player'){this.turn='enemy';this.aiTimer=1.15;this.banner('ENEMY TURN','ANALYSING TRAJECTORY',1);this.ui()}else if(this.shooter==='enemy'){this.round++;if(this.round>this.maxRounds&&this.mode==='duel'){this.finish();return}this.turn='player';this.wind=clamp(this.wind+(Math.random()-.5)*1.25,-2.2,2.2);this.moveLeft=22;this.banner('YOUR TURN','REPOSITION • AIM • FIRE',1.25);this.ui()}}
- finish(){this.turn='end';let outcome=this.player.hp<=0?'DEFEAT':this.enemy.hp<=0?'VICTORY':this.player.score>=this.enemy.score?'VICTORY':'DEFEAT';this.banner(outcome,'YOU '+this.player.score+'  •  ENEMY '+this.enemy.score,999);this.audio.tone(outcome==='VICTORY'?670:210,.7,'triangle',.25,outcome==='VICTORY'?250:-140);this.dom('turnNotice').classList.add('show');this.dom('turnTitle').textContent=outcome;this.dom('turnDetails').textContent='SCORE '+this.player.score+' : '+this.enemy.score+'  •  '+this.round+' ROUNDS';this.dom('turnAction').onclick=()=>{this.dom('turnNotice').classList.remove('show');this.start(this.mode)};try{let best=Number(localStorage.getItem('voxelTanksBest')||0);if(this.player.score>best)localStorage.setItem('voxelTanksBest',this.player.score)}catch(e){}}
- update(dt){this.time+=dt;if(this.messageTimer>0){this.messageTimer-=dt;if(this.messageTimer<=0){this.dom('message').style.opacity=0;this.dom('subMessage').style.opacity=0}}
+ finish(){
+  this.turn='end';
+  const diff=this.player.hp-this.enemy.hp;
+  let outcome=this.player.hp<=0?'DEFEAT':this.enemy.hp<=0?'VICTORY':diff>=0?'VICTORY':'DEFEAT';
+  this.banner(outcome,'',999);
+  this.audio.tone(outcome==='VICTORY'?670:210,.7,'triangle',.25,outcome==='VICTORY'?250:-140);
+  this.dom('turnNotice').classList.add('show');
+  this.dom('turnTitle').textContent=outcome;
+  this.dom('turnDetails').textContent='YOU '+Math.ceil(this.player.hp)+'% • ENEMY '+Math.ceil(this.enemy.hp)+'% • '+this.round+' ROUNDS';
+  this.dom('turnAction').onclick=()=>{this.dom('turnNotice').classList.remove('show');this.start('duel');};
+ }
+  update(dt){this.time+=dt;if(this.messageTimer>0){this.messageTimer-=dt;if(this.messageTimer<=0){this.dom('message').style.opacity=0;this.dom('subMessage').style.opacity=0}}
  let p=this.player,e=this.enemy;
  if(this.turn==='player'){let move=(this.keys.KeyW||this.keys.ArrowUp?1:0)-(this.keys.KeyS||this.keys.ArrowDown?1:0)+this.joy.y,steer=(this.keys.KeyD||this.keys.ArrowRight?1:0)-(this.keys.KeyA||this.keys.ArrowLeft?1:0)+this.joy.x;move=clamp(move,-1,1);steer=clamp(steer,-1,1);if(this.settings.invert)move=-move;if(this.moveLeft<=0)move=0;let before=[p.x,p.z];p.update(dt,move,steer,this.world);this.moveLeft=Math.max(0,this.moveLeft-Math.hypot(p.x-before[0],p.z-before[1]));}else{p.updateHeight(dt,this.world)}e.updateHeight(dt,this.world);
  if(this.turn==='enemy'){let desired=Math.atan2(p.x-e.x,p.z-e.z),difference=Math.atan2(Math.sin(desired-e.yaw),Math.cos(desired-e.yaw));let steer=clamp(difference*1.4,-1,1);if(this.aiTimer>.42)e.update(dt,.68,steer,this.world);this.aiTimer-=dt;if(this.aiTimer<=0)this.decideEnemy()}
