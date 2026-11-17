@@ -122,19 +122,17 @@ Game.prototype.handleSceneDrag=function(dx,dy){
  this.aimPitch=clamp((this.aimPitch??this.player.elev)-dy*.006,.14,1.41);
  if(this.mode==='duel'&&this.turn==='player'&&!this.tankSelected&&!this.movingPath){
   this.player.turret=this.orbit;this.player.elev=this.aimPitch;this.updateAimText();
- }else if(this.mode==='sandbox'){
-  this.player.turret=this.orbit;this.player.elev=this.aimPitch;this.updateAimText();
  }
 };
 const V03_START=Game.prototype.start;
 Game.prototype.start=function(mode){
  V03_START.call(this,mode);
- this.moveMode=false;this.movePlan=null;this.movingPath=null;this.tankSelected=false;this.movementHalo=[];this.aimWorldHeading=null;
+ this.moveMode=false;this.movePlan=null;this.movingPath=null;this.tankSelected=false;this.movementHalo=[];this.aimWorldHeading=null;this.debrisCloud=[];this.healthRayCache=null;
  this.orbit=this.player.turret;this.aimPitch=this.player.elev;this.moveCredits=6;this.enemyCredits=6;
  if(this.dom('weaponPanel'))this.dom('weaponPanel').classList.remove('expanded');
  if(this.dom('weaponToggle'))this.dom('weaponToggle').setAttribute('aria-expanded','false');
  this.refreshMoveUi();this.pickWeapon(0);
- this.banner(mode==='duel'?'TAP YOUR TANK TO MOVE':'TERRAIN SANDBOX',mode==='duel'?'SIX MOVES • DRAG TO AIM • FIRE':'DRIVE FREELY • DRAG TO AIM',2.5);
+ this.banner('TAP YOUR TANK TO MOVE','SIX MOVES • DRAG TO AIM • FIRE',2.5);
 };
 const V03_VOLLEY=Game.prototype.afterVolley;
 Game.prototype.afterVolley=function(){
@@ -164,6 +162,23 @@ Game.prototype.update=function(dt){
  const wasMoving=!!this.movingPath;
  V03_UPDATE.call(this,dt);
  if(this.world.tickDestruction)this.world.tickDestruction(dt);
+ if(this.world.debrisEvents&&this.world.debrisEvents.length){
+  if(!this.debrisCloud)this.debrisCloud=[];
+  const events=this.world.debrisEvents.splice(0,12);
+  for(let e of events){
+   const n=e.kind==='tree'?21:e.kind==='ruin'?32:14;
+   for(let i=0;i<n;i++){
+    let a=Math.random()*Math.PI*2,spd=(e.kind==='tree'?4:7)+Math.random()*8;
+    if(this.debrisCloud.length>185)this.debrisCloud.shift();
+    this.debrisCloud.push({
+     pos:[e.x+(Math.random()-.5),e.y+(Math.random()-.5),e.z+(Math.random()-.5)],
+     vel:[Math.sin(a)*spd,4+Math.random()*12,Math.cos(a)*spd],time:0,
+     life:1.0+Math.random()*1.1,size:e.kind==='tree'?.19+Math.random()*.25:.26+Math.random()*.35,
+     color:e.kind==='tree'?(Math.random()<.6?[.26,.49,.22]:[.42,.30,.20]):[.56,.53,.45]
+    });
+   }
+  }
+ }
  if(wasMoving&&this.aimWorldHeading!==null){
   this.orbit=this.aimWorldHeading-this.player.yaw;
   this.player.turret=this.orbit;
@@ -213,6 +228,7 @@ Game.prototype.draw=function(now){
   let a=clamp((d.life-d.time)/d.life,.1,1),size=d.size*(.8+.2*a);
   this.r.cube(d.pos,[size,size,size],d.color,null,a);
  }
+ this.drawTankHealthBars();
 };
 Game.prototype.spawnCratersideDebris=function(p,pos,rad,removed){
  if(!removed||rad<.8)return;
@@ -223,5 +239,38 @@ Game.prototype.spawnCratersideDebris=function(p,pos,rad,removed){
   let c=material===3?[.43,.46,.46]:material===4?[.76,.62,.37]:Math.random()<.3?[.49,.35,.22]:[.64,.52,.33];
   if(this.debrisCloud.length>185)this.debrisCloud.shift();
   this.debrisCloud.push({pos:[...pos],vel:[Math.sin(a)*spd,up+Math.random()*7,Math.cos(a)*spd],time:0,life:.85+Math.random()*1.1,size:.18+Math.random()*.42,color:c});
+ }
+};
+
+Game.prototype.cameraSeesTank=function(tank){
+ if(!this.lastCamera)return false;
+ let eye=this.lastCamera[0],target=[tank.x,tank.y+2.3,tank.z];
+ let delta=V3.sub(target,eye),length=V3.len(delta);
+ let steps=Math.ceil(length/.85);
+ for(let i=1;i<steps-2;i++){
+  let pt=V3.add(eye,V3.mul(delta,i/steps));
+  if(this.world.solid(...pt))return false;
+  if(i%3===0&&this.world.propHit&&this.world.propHit(...pt))return false;
+ }
+ return true;
+};
+Game.prototype.drawTankHealthBars=function(){
+ if(this.mode==='menu')return;
+ const rect=this.canvas.getBoundingClientRect(),w=rect.width,h=rect.height;
+ if(this.healthRayCache===null||!this.healthRayCache||this.time-this.healthRayCache.time>.12){
+  this.healthRayCache={time:this.time,player:this.cameraSeesTank(this.player),enemy:this.cameraSeesTank(this.enemy)};
+ }
+ for(let [tank,id,visible] of [
+  [this.player,'playerTankHealth',this.healthRayCache.player],
+  [this.enemy,'enemyTankHealth',this.healthRayCache.enemy]
+ ]){
+  let element=this.dom(id);if(!element)continue;
+  let projection=v03Project(this.lastCamera,[tank.x,tank.y+4.15,tank.z],w,h);
+  let onscreen=!!(projection&&projection[0]>12&&projection[0]<w-12&&projection[1]>14&&projection[1]<h-12);
+  element.style.opacity=(onscreen&&visible)?'1':'0';
+  if(!onscreen||!visible)continue;
+  element.style.left=Math.round(projection[0]+rect.left)+'px';
+  element.style.top=Math.round(projection[1]+rect.top)+'px';
+  element.firstElementChild.style.width=clamp(tank.hp,0,100)+'%';
  }
 };
