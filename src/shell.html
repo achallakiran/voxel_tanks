@@ -24,8 +24,8 @@
     </div>
     <div class="tips">
       <b>TACTICAL ARTILLERY</b> &nbsp;•&nbsp; Six moves per tank &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; Deformable terrain
-      <div style="margin-top:6px">Drag the camera to aim the barrel; raise and lower the view to change firing elevation. Adjust power on the right before firing.</div>
-      <div style="margin-top:7px;color:#ffd577">Tap your tank to select it, then tap nearby reachable ground to move. Tap the tank again to deselect. Each movement action costs one of six moves.</div>
+      <div style="margin-top:6px">Tap your tank to reveal four aiming arrows. Tap or hold the arrows to rotate the turret or raise/lower the barrel. Adjust power on the right.</div>
+      <div style="margin-top:7px;color:#ffd577">While selected, tap nearby reachable ground to move (one of six moves), or tap the tank again to deselect. Camera dragging no longer changes aim.</div>
     </div>
     <div id="errorMessage" style="display:none;background:#6e2121;color:white;margin-top:20px;border-radius:8px;padding:12px"></div>
   </main>
@@ -37,6 +37,12 @@
     <div class="actionsTop">
       <button class="iconButton" id="pauseButton" title="Pause, settings and main menu" aria-label="Pause and menu">Ⅱ</button>
     </div>
+  </div>
+  <div id="tankAimControls" role="group" aria-label="Aim the selected tank">
+    <button type="button" id="aimUp" class="aimArrow aimUp" aria-label="Raise barrel elevation" title="Aim up">▲</button>
+    <button type="button" id="aimLeft" class="aimArrow aimLeft" aria-label="Rotate turret left" title="Aim left">◀</button>
+    <button type="button" id="aimRight" class="aimArrow aimRight" aria-label="Rotate turret right" title="Aim right">▶</button>
+    <button type="button" id="aimDown" class="aimArrow aimDown" aria-label="Lower barrel elevation" title="Aim down">▼</button>
   </div>
   <div id="tankHealthLayer" aria-hidden="true">
     <div class="tankHealthBar playerTankBar" id="playerTankHealth"><div class="tankHealthFill"></div></div>
@@ -77,7 +83,7 @@
     </label>
     <label>Sound level <input id="volume" type="range" min="0" max="1" value=".45" step=".05" aria-label="Volume"></label>
     
-    <p><b>Controls:</b> Drag to aim left/right and up/down. Use the vertical power slider to set firing strength. Tap your tank to select/deselect it, then tap reachable terrain to move. Press Pause for settings, restart or the main menu.</p>
+    <p><b>Controls:</b> Tap your tank to display the four precise aiming arrows. Press or hold an arrow to adjust the turret. Use the vertical power slider to set firing strength. While selected, tap reachable terrain to move. Press Pause for settings, restart or the main menu.</p>
     <div class="modalButtons">
       <button class="btn main" id="closePanel">▶ RESUME / CLOSE</button>
       <button class="btn" id="restartButton">↻ RESTART</button>
