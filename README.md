@@ -14,8 +14,8 @@ A fully client-side, voxel-based 3D tactical artillery game for desktop browsers
 
 | Action | Desktop | Touch device |
 | --- | --- | --- |
-| Aim left / right | Drag the battlefield sideways | Drag battlefield sideways |
-| Adjust barrel height | Drag battlefield upward / downward | Drag battlefield upward / downward |
+| Aim left / right | Select tank, click ◀ or ▶ | Select tank, tap ◀ or ▶ |
+| Adjust barrel height | Select tank, click ▲ or ▼ | Select tank, tap ▲ or ▼ |
 | Power | Vertical slider at the bottom-right | Same vertical slider |
 | Fire | Space or Fire button | Fire button |
 | Choose weapon | Click visual dropdown / keys 1–6 | Tap visual weapon dropdown |
@@ -24,7 +24,7 @@ A fully client-side, voxel-based 3D tactical artillery game for desktop browsers
 | Zoom | Mouse wheel | Browser-device gestures where supported |
 | Pause / settings / restart / main menu | Pause button / Escape | Pause button |
 
-No bearing or elevation sliders. There is no Sandbox mode or separate in-game settings/menu button.
+No bearing or elevation sliders or joystick. **Tap the player tank to reveal four arrows around it.** Each arrow tap adjusts aim by 2°; holding an arrow repeats in smaller 1° increments. Accidental screen drags cannot change the aim. A translucent golden trajectory is shown only for approximately the first 55% of the predicted shell flight, concealing the landing point. There is no Sandbox mode or separate in-game settings/menu button.
 
 ## Six movement actions per match
 
@@ -33,6 +33,8 @@ Each tank has **exactly six movement opportunities for the entire match**. Each 
 ## Battlefield discovery and combat
 
 - A downward-looking elevated camera follows the fired projectile and shows the landscape beneath it. It does **not** target the enemy or reveal hidden positions.
+- The selected tank exposes four precise directional aiming arrows. The camera follows deliberate turret adjustments; incidental dragging does not change bearing or elevation.
+- An eye-catching translucent partial ballistic arc previews roughly half the shell's flight; it never projects a precise impact marker.
 - No radar, enemy location indicator or automatic target camera.
 - The AI derives estimates from actual line-of-sight and approximate firing directions rather than perfect access to hidden player positions.
 - Health bars are anchored to **visible** tanks. The enemy bar is hidden if the tank is off-camera or terrain-occluded.
