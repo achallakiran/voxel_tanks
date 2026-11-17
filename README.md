@@ -6,7 +6,21 @@ A **self-contained WebGL 2 voxel artillery game**, built for GitHub Pages and of
 
 - GitHub Pages (once Pages is enabled): https://achallakiran.github.io/voxel_tanks/
 - Standalone offline file: save **[index.html](index.html)** from the repository, then open it locally in a WebGL 2-capable browser. It contains the code and styles; **no CDN or external game assets** are required.
-- The first public build is **v0.1 playable alpha**, not the entire planned 30-weapon game.
+- The first public build is **v0.2 playable alpha**, not the entire planned 30-weapon game.
+
+## Added in v0.2 — Tactical Discovery
+
+- **No enemy locator:** no radar, enemy arrow, marker, or camera that automatically targets the enemy. A shot is an exploration opportunity.
+- **Bird's-eye shell tracking:** during flight, the camera follows above the projectile and aims downward to show terrain; after impact it briefly frames the crater or build site.
+- **Classic match movement limits:** six shared-rule movement credits per tank for the match, with ~4 voxels of traversable route per credit. Credits do not reset every turn.
+- **Click/tap to move:** aim at visible ground, preview the rendered route, and press ✓ to confirm or × to cancel. Terrain slopes, footprint clearance and steep craters restrict paths.
+- **Terrain-aware settling:** tanks fall into excavated ground instead of snapping to the highest roof in a vertical column.
+- **Enemy discovery:** the opponent AI uses direct line-of-sight checks and approximate acoustic evidence, not perfect hidden player coordinates. Both tanks use bounded movement credits.
+- **Friendly fire:** a shell can return and hit its own tank after launch clearance, with a self-inflicted score penalty.
+- **Six differentiated weapon presentations:** additional procedural projectile models, distinct impact sequences, and layered locally synthesized audio.
+- **Sandbox mode:** unrestricted joystick / WASD driving remains available.
+
+The v0.2 changes are an iterative alpha. Full structural-collapse simulation, sophisticated tunnel navigation, complete mobility recovery and all 30 planned weapons are still future work.
 
 ## Included in v0.1
 
@@ -24,7 +38,8 @@ A **self-contained WebGL 2 voxel artillery game**, built for GitHub Pages and of
 
 | Action | Desktop | Mobile |
 | --- | --- | --- |
-| Drive | W/A/S/D or arrow keys | Touch joystick |
+| Classic movement | Tap/click visible terrain and confirm ✓ | Tap terrain and confirm ✓ |
+| Sandbox driving | W/A/S/D or arrow keys | Touch joystick |
 | Orbit camera | Drag pointer | Drag in scene |
 | Zoom | Mouse wheel | Zoom slider not available; scene drag offers camera orbit |
 | Change camera | C | Camera icon |
@@ -47,7 +62,8 @@ npm test
 - `src/renderer.js`: dependency-free WebGL2 graphics and primitives
 - `src/world.js`: volumetric editable voxel world and chunk meshes
 - `src/tanks.js`: procedural tanks, movement and animations
-- `src/game.js`: weapons, ballistics, enemy AI, sound, input and turns
+- `src/game.js`: foundational weapons, ballistics, input and turns
+- `src/tactics.js`: v0.2 camera, movement, perception, self-fire and weapon cinematics
 - `src/style.css`, `src/shell.html`: responsive UI
 - `scripts/build.mjs`: deterministic standalone builder
 - `tests/smoke.mjs`: source/bundle/terrain/AI tests
