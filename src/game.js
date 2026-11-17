@@ -61,8 +61,7 @@ bind(){
  window.addEventListener('blur',()=>{this.keys={};this.joy={x:0,y:0};});
  this.pickWeapon(0);
 }
-  bindJoystick(){let base=this.dom('joyBase'),knob=this.dom('joyKnob'),held=null;let move=e=>{let b=base.getBoundingClientRect(),x=e.clientX-(b.left+b.width/2),y=e.clientY-(b.top+b.height/2),radius=b.width*.34,mag=Math.hypot(x,y),mul=Math.min(1,radius/(mag||1));x*=mul;y*=mul;this.joy.x=x/radius;this.joy.y=-y/radius;knob.style.transform='translate('+x+'px,'+y+'px)'};base.addEventListener('pointerdown',e=>{e.preventDefault();held=e.pointerId;base.setPointerCapture(e.pointerId);move(e)});base.addEventListener('pointermove',e=>{if(e.pointerId===held){e.preventDefault();move(e)}});let release=e=>{if(e.pointerId!==held)return;held=null;this.joy={x:0,y:0};knob.style.transform='translate(0,0)'};base.addEventListener('pointerup',release);base.addEventListener('pointercancel',release)}
-updateAimText(){
+  updateAimText(){
   const power=this.dom('powerValue');
   if(power)power.textContent=Math.round(this.player.power)+'%';
 }
@@ -79,9 +78,13 @@ ui(){
  banner(s,sub='',duration=1.7){this.dom('message').textContent=s;this.dom('subMessage').textContent=sub;this.dom('message').style.opacity=1;this.dom('subMessage').style.opacity=1;this.messageTimer=duration}
  openPanel(){this.paused=true;this.dom('panel').classList.add('open')}
  closePanel(){this.dom('panel').classList.remove('open');this.paused=false;this.prev=performance.now()}
- start(mode){this.audio.wake();mode='duel';this.mode=mode;this.turn='player';this.paused=false;this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.wind=(Math.random()-.5)*3.4;this.round=1;this.selected=0;this.moveLeft=22;this.projectiles=[];this.fx=[];this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.cam='chase';this.orbit=0;this.dom('menu').classList.add('hidden');this.dom('hud').classList.add('active');this.pickWeapon(0);this.ui();this.banner(mode==='sandbox'?'TERRAIN SANDBOX':'BATTLE START','W · A · S · D TO DRIVE  •  AIM & FIRE',2.5)}
- fire(){if(this.turn!=='player'||this.paused)return;this.launch(this.player,WEAPONS[this.selected]);if(this.mode!=='sandbox'){this.turn='flying';this.shooter='player';this.ui()}else{this.shooter='sandbox';this.moveLeft=22;this.ui()}}
- launch(t,w){let dir=t.direction(),pos=t.muzzle(),speed=t.power*.94;this.projectiles.push({pos,vel:V3.mul(dir,speed),w,owner:t,age:0,life:0,bounce:0,trail:[],frag:false});t.recoil=1;this.audio.shot();this.shake=.15;this.banner(w.name.toUpperCase(),'INCOMING',.55)}
+ start(mode){this.audio.wake();mode='duel';this.mode=mode;this.turn='player';this.paused=false;this.world=new VoxelWorld(this.r);this.player=new Tank(-31,-15,this.world);this.enemy=new Tank(29,21,this.world,true);this.wind=(Math.random()-.5)*3.4;this.round=1;this.selected=0;this.moveLeft=22;this.projectiles=[];this.fx=[];this.shooter=null;this.resolveTimer=-1;this.aiTimer=-1;this.cam='chase';this.orbit=0;this.dom('menu').classList.add('hidden');this.dom('hud').classList.add('active');this.pickWeapon(0);this.ui();this.banner('BATTLE START','DRAG TO AIM • TAP TANK TO MOVE',2.5)}
+ fire(){
+  if(this.turn!=='player'||this.paused||this.movingPath)return;
+  this.launch(this.player,WEAPONS[this.selected]);
+  this.turn='flying';this.shooter='player';this.ui();
+ }
+  launch(t,w){let dir=t.direction(),pos=t.muzzle(),speed=t.power*.94;this.projectiles.push({pos,vel:V3.mul(dir,speed),w,owner:t,age:0,life:0,bounce:0,trail:[],frag:false});t.recoil=1;this.audio.shot();this.shake=.15;this.banner(w.name.toUpperCase(),'INCOMING',.55)}
  spawnFX(pos,col,n=42,energy=10){for(let i=0;i<n;i++){if(this.fx.length>260)this.fx.shift();let a=Math.random()*6.283,up=Math.random(),dir=[Math.cos(a)*Math.sqrt(1-up*up),up,Math.sin(a)*Math.sqrt(1-up*up)];this.fx.push({pos:[...pos],vel:V3.mul(dir,energy*(.3+.8*Math.random())),color:col,size:.11+Math.random()*.35,life:.5+Math.random()*1.05,max:1.5})}}
  burstCluster(p){for(let i=0;i<6;i++){let a=i*6.283/6,vel=[p.vel[0]*.54+Math.cos(a)*7,p.vel[1]*.3+6+Math.random()*6,p.vel[2]*.54+Math.sin(a)*7];this.projectiles.push({pos:[...p.pos],vel,w:p.w,owner:p.owner,age:0,bounce:0,trail:[],frag:true})}this.spawnFX(p.pos,p.w.col,22,5);this.audio.tone(620,.24,'triangle',.15,-280)}
  damage(center,rad,damage,owner){for(let t of [this.player,this.enemy]){let d=V3.len(V3.sub(t.position(),center));let hit=clamp(1-d/(rad+2.4),0,1);if(!hit)continue;let dealt=t.applyDamage(damage*hit);if(owner&&owner!==t)owner.score+=Math.round(dealt*1.5);if(dealt>5){this.spawnFX(t.position(),[1,.45,.18],12,6);this.audio.hit()}this.ui()}}
@@ -91,8 +94,8 @@ ui(){
  this.player.updateHeight(.02,this.world);this.enemy.updateHeight(.02,this.world);
  }
  stepProjectiles(dt){let list=this.projectiles;for(let i=list.length-1;i>=0;i--){let p=list[i];p.age+=dt;if(p.w.id==='cluster'&&!p.frag&&p.age>1.25){list.splice(i,1);this.burstCluster(p);continue}
- p.vel[0]+=this.wind*.36*dt;p.vel[1]-=21*dt;p.pos=V3.add(p.pos,V3.mul(p.vel,dt));if(p.age%0.11<dt)p.trail.unshift([...p.pos]);if(p.trail.length>11)p.trail.pop();
- let collision=this.world.solid(...p.pos);if(this.world.propHit&&this.world.propHit(...p.pos))collision=true;if(p.age>.32&&[this.player,this.enemy].some(t=>V3.len(V3.sub(p.pos,t.position()))<1.9))collision=true;
+ const oldPosition=[...p.pos];p.vel[0]+=this.wind*.36*dt;p.vel[1]-=21*dt;p.pos=V3.add(p.pos,V3.mul(p.vel,dt));if(p.age%0.11<dt)p.trail.unshift([...p.pos]);if(p.trail.length>11)p.trail.pop();
+ let collision=this.world.solid(...p.pos);if(this.world.propHit){let segments=Math.max(1,Math.ceil(V3.len(V3.sub(p.pos,oldPosition))/.32));for(let k=1;k<=segments;k++){let sample=V3.add(oldPosition,V3.mul(V3.sub(p.pos,oldPosition),k/segments));if(this.world.propHit(...sample)){collision=true;p.pos=sample;break;}}}if(p.age>.32&&[this.player,this.enemy].some(t=>V3.len(V3.sub(p.pos,t.position()))<1.9))collision=true;
  if(p.pos[1]<-1||p.pos[1]>100||Math.abs(p.pos[0])>56||Math.abs(p.pos[2])>56||p.age>9)collision=true;
  if(collision){if(p.w.id==='roller'&&p.bounce<4&&p.age<5){p.bounce++;p.vel[0]*=.78;p.vel[2]*=.78;p.vel[1]=p.bounce<3?6:3;let ground=this.world.height(p.pos[0],p.pos[2]);p.pos[1]=Math.max(p.pos[1],ground+1.3);this.spawnFX(p.pos,p.w.col,8,3);this.audio.tone(270,.10,'triangle',.13,-50);continue}
  list.splice(i,1);let ground=this.world.height(p.pos[0],p.pos[2]);this.impact(p,[clamp(p.pos[0],-54,54),clamp(p.pos[1],Math.max(1,ground-3),37),clamp(p.pos[2],-54,54)])}
@@ -139,7 +142,7 @@ ui(){
  for(let p of this.projectiles){let co=p.w.col;for(let i=0;i<p.trail.length;i++){let q=p.trail[i],s=.21*(1-i/p.trail.length)+.04;this.r.cube(q,[s,s,s],co)}let s=p.w.id==='mega'?.63:p.w.id==='roller'?.66:.39;this.r.cube(p.pos,[s,s,s],co);this.r.cube(p.pos,[s*.35,s*.35,s*.35],[1,1,.8])}
  for(let p of this.fx){let alpha=clamp(p.life/1.4,.08,.9),s=p.size*clamp(p.life,0,1.2);this.r.cube(p.pos,[s,s,s],p.color,null,alpha)}
  this.drawRadar()}
- drawRadar(){if(this.mode==='menu')return;let c=this.dom('radar');if(!c||getComputedStyle(c).display==='none')return;let ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);let m=w/2;ctx.fillStyle='rgba(9,31,40,.75)';ctx.beginPath();ctx.arc(m,m,m-2,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(222,237,226,.24)';for(let rad of [.35,.7,.94]){ctx.beginPath();ctx.arc(m,m,m*rad,0,6.283);ctx.stroke()}for(let [t,col] of [[this.player,'#91ffd2'],[this.enemy,'#ff9e80']]){let x=m+t.x/56*m*.88,y=m+t.z/56*m*.88;ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,5,0,6.283);ctx.fill()}ctx.fillStyle='#c7d7cd';ctx.font='bold 10px system-ui';ctx.fillText('N',m-3,11)}
- frame(now){let dt=clamp((now-this.prev)/1000,0,.05);this.prev=now;if(!this.paused)this.update(dt);this.draw(now);requestAnimationFrame(t=>this.frame(t))}
+ drawRadar(){}
+  frame(now){let dt=clamp((now-this.prev)/1000,0,.05);this.prev=now;if(!this.paused)this.update(dt);this.draw(now);requestAnimationFrame(t=>this.frame(t))}
 }
 window.addEventListener('DOMContentLoaded',()=>{try{window.voxelTanks=new Game()}catch(e){console.error(e);let title=document.getElementById('errorMessage');if(title){title.style.display='block';title.textContent='Cannot start Voxel Tanks: '+e.message}}});
