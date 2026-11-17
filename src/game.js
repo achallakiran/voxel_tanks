@@ -45,7 +45,7 @@ class Game{
  }
  stepProjectiles(dt){let list=this.projectiles;for(let i=list.length-1;i>=0;i--){let p=list[i];p.age+=dt;if(p.w.id==='cluster'&&!p.frag&&p.age>1.25){list.splice(i,1);this.burstCluster(p);continue}
  p.vel[0]+=this.wind*.36*dt;p.vel[1]-=21*dt;p.pos=V3.add(p.pos,V3.mul(p.vel,dt));if(p.age%0.11<dt)p.trail.unshift([...p.pos]);if(p.trail.length>11)p.trail.pop();
- let collision=this.world.solid(...p.pos),hitTank=(p.owner===this.player?this.enemy:this.player);if(p.age>.15&&V3.len(V3.sub(p.pos,hitTank.position()))<1.9)collision=true;
+ let collision=this.world.solid(...p.pos);if(p.age>.32&&[this.player,this.enemy].some(t=>V3.len(V3.sub(p.pos,t.position()))<1.9))collision=true;
  if(p.pos[1]<-1||p.pos[1]>100||Math.abs(p.pos[0])>56||Math.abs(p.pos[2])>56||p.age>9)collision=true;
  if(collision){if(p.w.id==='roller'&&p.bounce<4&&p.age<5){p.bounce++;p.vel[0]*=.78;p.vel[2]*=.78;p.vel[1]=p.bounce<3?6:3;let ground=this.world.height(p.pos[0],p.pos[2]);p.pos[1]=Math.max(p.pos[1],ground+1.3);this.spawnFX(p.pos,p.w.col,8,3);this.audio.tone(270,.10,'triangle',.13,-50);continue}
  list.splice(i,1);let ground=this.world.height(p.pos[0],p.pos[2]);this.impact(p,[clamp(p.pos[0],-54,54),clamp(p.pos[1],Math.max(1,ground-3),37),clamp(p.pos[2],-54,54)])}
