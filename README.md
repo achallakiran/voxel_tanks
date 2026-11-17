@@ -1,87 +1,74 @@
 # VOXEL TANKS — Artillery Unleashed
 
-A **self-contained WebGL 2 voxel artillery game**, built for GitHub Pages and offline desktop/mobile browsers.
+A fully client-side, voxel-based 3D tactical artillery game for desktop browsers and landscape mobile browsers.
 
-## Play
+## Play v0.3
 
-- GitHub Pages (once Pages is enabled): https://achallakiran.github.io/voxel_tanks/
-- Standalone offline file: save **[index.html](index.html)** from the repository, then open it locally in a WebGL 2-capable browser. It contains the code and styles; **no CDN or external game assets** are required.
-- The first public build is **v0.2 playable alpha**, not the entire planned 30-weapon game.
+**GitHub Pages:** https://achallakiran.github.io/voxel_tanks/
 
-## Added in v0.2 — Tactical Discovery
+**Offline:** Download the repository's root [index.html](index.html) and open it directly in a WebGL 2-capable browser. The HTML embeds all runtime JavaScript and CSS. The game does not use external assets, CDNs, accounts or a game server.
 
-- **No enemy locator:** no radar, enemy arrow, marker, or camera that automatically targets the enemy. A shot is an exploration opportunity.
-- **Bird's-eye shell tracking:** during flight, the camera follows above the projectile and aims downward to show terrain; after impact it briefly frames the crater or build site.
-- **Classic match movement limits:** six shared-rule movement credits per tank for the match, with ~4 voxels of traversable route per credit. Credits do not reset every turn.
-- **Click/tap to move:** aim at visible ground, preview the rendered route, and press ✓ to confirm or × to cancel. Terrain slopes, footprint clearance and steep craters restrict paths.
-- **Terrain-aware settling:** tanks fall into excavated ground instead of snapping to the highest roof in a vertical column.
-- **Enemy discovery:** the opponent AI uses direct line-of-sight checks and approximate acoustic evidence, not perfect hidden player coordinates. Both tanks use bounded movement credits.
-- **Friendly fire:** a shell can return and hit its own tank after launch clearance, with a self-inflicted score penalty.
-- **Six differentiated weapon presentations:** additional procedural projectile models, distinct impact sequences, and layered locally synthesized audio.
-- **Sandbox mode:** unrestricted joystick / WASD driving remains available.
-
-The v0.2 changes are an iterative alpha. Full structural-collapse simulation, sophisticated tunnel navigation, complete mobility recovery and all 30 planned weapons are still future work.
-
-## Included in v0.1
-
-- Fully 3D voxel terrain with editable blocks and local chunk-mesh rebuilding.
-- Procedural highland map, trees, ruins, rocks, distant clouds and water.
-- Two detailed voxel tanks with rotating turrets, barrel elevation, separate wheels, treads, hull pitch, terrain-aware movement and visible damage.
-- Classic ten-round turn-based artillery, score, health, wind and 3D ballistic aiming.
-- Six **functional** weapons: Cannon (crater), Mega Blast (large crater), Cluster (splits into six bomblets), Digger (tunnel), Builder (adds a voxel mountain), and Roller (rebounding projectile).
-- Enemy turn logic with projectile search, several difficulty presets, weapon choice and pre-shot repositioning.
-- Free-building practice Sandbox, chase/overhead/orbit/projectile cameras, particle effects and synthesized offline sound.
-- Touch joystick, swipe orbit, responsive HUD, keyboard controls, pause and settings.
-- No remote runtime resources and no server/backend.
+> GitHub Pages must be configured under Settings → Pages → Deploy from branch `main`, directory `/(root)`.
 
 ## Controls
 
-| Action | Desktop | Mobile |
+| Action | Desktop | Touch device |
 | --- | --- | --- |
-| Classic movement | Tap/click visible terrain and confirm ✓ | Tap terrain and confirm ✓ |
-| Sandbox driving | W/A/S/D or arrow keys | Touch joystick |
-| Orbit camera | Drag pointer | Drag in scene |
-| Zoom | Mouse wheel | Zoom slider not available; scene drag offers camera orbit |
-| Change camera | C | Camera icon |
-| Aim | Azimuth, angle, power sliders | Same sliders |
-| Choose weapon | 1–6 or weapon buttons | Weapon buttons |
-| Fire | Space or FIRE | FIRE |
-| Menu | Settings/pause buttons | Settings/pause icons |
+| Aim left / right | Drag the battlefield sideways | Drag battlefield sideways |
+| Adjust barrel height | Drag battlefield upward / downward | Drag battlefield upward / downward |
+| Power | Vertical slider at the bottom-right | Same vertical slider |
+| Fire | Space or Fire button | Fire button |
+| Choose weapon | Click visual dropdown / keys 1–6 | Tap visual weapon dropdown |
+| Select / deselect tank | Click tank | Tap tank |
+| Move | With your tank selected, click traversable nearby land | Tap traversable nearby land |
+| Zoom | Mouse wheel | Browser-device gestures where supported |
+| Pause / settings / restart / main menu | Pause button / Escape | Pause button |
 
-Mobile play is designed for landscape orientation.
+No bearing or elevation sliders. There is no Sandbox mode or separate in-game settings/menu button.
 
-## Local source build
+## Six movement actions per match
 
-Requires Node.js >=18; **no npm installation or dependencies**.
+Each tank has **exactly six movement opportunities for the entire match**. Each move can cover at most approximately **four voxels along a traversable route** and always consumes **one move**, whether the actual destination is near or far inside that limit. Unreachable/too-far taps consume none. The tank automatically deselects when moving. Cliff slopes, narrow clearances, caves and crater walls can make movement impossible until the terrain is modified. The AI operates under the same limits.
+
+## Battlefield discovery and combat
+
+- A downward-looking elevated camera follows the fired projectile and shows the landscape beneath it. It does **not** target the enemy or reveal hidden positions.
+- No radar, enemy location indicator or automatic target camera.
+- The AI derives estimates from actual line-of-sight and approximate firing directions rather than perfect access to hidden player positions.
+- Health bars are anchored to **visible** tanks. The enemy bar is hidden if the tank is off-camera or terrain-occluded.
+- Both tanks can suffer their own projectile, blast, fall or terrain-induced damage.
+- Match results use remaining health rather than an on-screen points display.
+
+## Weapons (six available)
+
+Cannon, Mega Blast, Cluster, Digger, Builder and Roller. These have separate projectile graphics, procedural audio layers and impact effects, including excavation, tunnels, constructed earth, clusters and bouncing projectiles.
+
+**v0.3 destruction improvements:** projectiles collide with tree trunks/foliage, rocks and ruins; affected trees tilt and fall; breaking props produces airborne fragments; explosion craters eject coloured debris and gradually deposit some of the excavated material into **persistent voxel mounds** around the crater. Those deposits alter subsequent terrain collision and movement.
+
+## Source structure and build
+
+Node.js 18 or higher, with **zero npm dependencies**.
 
 ```bash
 npm run build
 npm test
 ```
 
-- `src/renderer.js`: dependency-free WebGL2 graphics and primitives
-- `src/world.js`: volumetric editable voxel world and chunk meshes
-- `src/tanks.js`: procedural tanks, movement and animations
-- `src/game.js`: foundational weapons, ballistics, input and turns
-- `src/tactics.js`: v0.2 camera, movement, perception, self-fire and weapon cinematics
-- `src/style.css`, `src/shell.html`: responsive UI
-- `scripts/build.mjs`: deterministic standalone builder
-- `tests/smoke.mjs`: source/bundle/terrain/AI tests
-- `index.html`: committed, generated GitHub Pages entry point and offline build
+- `src/renderer.js` — dependency-free WebGL2 renderer, shaders and primitive geometry
+- `src/world.js` — volumetric editable voxel world, materials, props, crater deposits and falling vegetation
+- `src/tanks.js` — detailed procedural tanks and tank animation
+- `src/game.js` — base turn logic, ballistics, impact resolution, input and audio
+- `src/tactics.js` — navigation, sight-limited AI, shell camera and weapon cinematics
+- `src/v03.js` — camera-aim controls, one-credit tank selection/movement, visual weapon picker, health bars and debris
+- `src/shell.html`, `src/style.css` — game UI
+- `scripts/build.mjs` — deterministic, self-contained `index.html` generator
+- `tests/smoke.mjs` — regression checks for ballistics, movement, environment and offline packaging
+- `index.html` — committed standalone and GitHub Pages entry point
 
-### GitHub Pages configuration
+## Development status
 
-In **Settings → Pages**, select **Deploy from a branch**, choose **main** and **/(root)**. GitHub Pages then serves the root `index.html`.
-
-## Planned, not yet built
-
-This alpha is a tested foundation for the roadmap, rather than an assertion that the full design is already implemented. Remaining work includes:
-- All 30 individually animated weapons and their advanced interactions (electricity, lava, freeze, gravity, shields, full bridge/tower construction).
-- Five full biomes, region streaming, structural support solver, material-aware collapse, liquids, and richer props.
-- More tank classes, smarter terrain-aware navigation and AI multi-turn planning.
-- Survival, local hot-seat, tutorials, progression, additional soundscape and cinematic polish.
-- Browser/device QA and sustained 30/60 fps optimization against real-world hardware.
+v0.3 is a playable **alpha**, not the complete original design. Advanced structural collapse, a full 30-weapon arsenal, robust continuous roller physics, extensive enemy multi-turn tactics, more biomes and performance tuning on actual mobile devices remain for future versions. The initial crater rims and prop breakage are localized simulations; a complete physics engine has not yet been implemented.
 
 ## License
 
-Project source copyright its owner. Pocket Tanks is an inspiration; this is an independent prototype with original procedural visuals and mechanics.
+Project source copyright its owner. This is an independently implemented original game inspired by the artillery genre, not affiliated with Pocket Tanks.
