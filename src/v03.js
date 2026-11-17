@@ -57,6 +57,27 @@ Game.prototype.bind=function(){
  V03_BIND.call(this);
  // Legacy v0.2 controls remain inert for compatibility but are never visible.
  const oldMove=this.dom('moveControls');if(oldMove)oldMove.style.display='none';
+ const dirs=[['aimUp',0,1],['aimDown',0,-1],['aimLeft',-1,0],['aimRight',1,0]];
+ for(const [id,az,el] of dirs){
+  const button=this.dom(id);
+  if(!button)throw Error('Missing directional control '+id);
+  button.addEventListener('pointerdown',e=>{
+   e.preventDefault();e.stopPropagation();
+   if(!this.canAdjustTankAim())return;
+   this.heldAim={id,az,el,time:0,repeat:0};
+   button.classList.add('held');
+   this.nudgeTankAim(az,el,2);
+   try{button.setPointerCapture(e.pointerId)}catch(error){}
+  });
+  const release=()=>{
+   if(this.heldAim&&this.heldAim.id===id)this.heldAim=null;
+   button.classList.remove('held');
+  };
+  button.addEventListener('pointerup',release);
+  button.addEventListener('pointercancel',release);
+  button.addEventListener('lostpointercapture',release);
+ }
+
  let panel=this.dom('weaponPanel'),toggle=this.dom('weaponToggle');
  if(panel&&toggle){
   toggle.onclick=()=>{if(this.mode==='menu')return;let open=panel.classList.toggle('expanded');toggle.setAttribute('aria-expanded',String(open));this.audio.select();};
@@ -122,17 +143,17 @@ Game.prototype.handleSceneDrag=function(){};
 const V03_START=Game.prototype.start;
 Game.prototype.start=function(mode){
  V03_START.call(this,mode);
- this.moveMode=false;this.movePlan=null;this.movingPath=null;this.tankSelected=false;this.movementHalo=[];this.aimWorldHeading=null;this.debrisCloud=[];this.healthRayCache=null;
+ this.moveMode=false;this.movePlan=null;this.movingPath=null;this.tankSelected=false;this.movementHalo=[];this.aimWorldHeading=null;this.debrisCloud=[];this.healthRayCache=null;this.heldAim=null;this._arcCache=null;
  this.orbit=this.player.turret;this.aimPitch=this.player.elev;this.moveCredits=6;this.enemyCredits=6;
  if(this.dom('weaponPanel'))this.dom('weaponPanel').classList.remove('expanded');
  if(this.dom('weaponToggle'))this.dom('weaponToggle').setAttribute('aria-expanded','false');
  this.refreshMoveUi();this.pickWeapon(0);
- this.banner('TAP YOUR TANK TO MOVE','SIX MOVES • DRAG TO AIM • FIRE',2.5);
+ this.banner('TAP TANK TO AIM OR MOVE','FOUR ARROWS • SIX MOVES • PARTIAL FLIGHT ARC',2.5);
 };
 const V03_VOLLEY=Game.prototype.afterVolley;
 Game.prototype.afterVolley=function(){
  V03_VOLLEY.call(this);
- this.moveMode=false;this.tankSelected=false;this.movementHalo=[];
+ this.moveMode=false;this.tankSelected=false;this.movementHalo=[];this.heldAim=null;
  this.refreshMoveUi();
 };
 const V03_PICK=Game.prototype.pickWeapon;
@@ -156,6 +177,21 @@ const V03_UPDATE=Game.prototype.update;
 Game.prototype.update=function(dt){
  const wasMoving=!!this.movingPath;
  V03_UPDATE.call(this,dt);
+ if(this.heldAim){
+  if(!this.canAdjustTankAim())this.heldAim=null;
+  else {
+   let held=this.heldAim;
+   held.time+=dt;
+   if(held.time>=.36){
+    held.repeat+=dt;
+    let count=0;
+    while(held.repeat>=.095&&count++<3){
+     held.repeat-=.095;
+     this.nudgeTankAim(held.az,held.el,1);
+    }
+   }
+  }
+ }
  if(this.world.tickDestruction)this.world.tickDestruction(dt);
  if(this.world.debrisEvents&&this.world.debrisEvents.length){
   if(!this.debrisCloud)this.debrisCloud=[];
@@ -224,6 +260,7 @@ Game.prototype.draw=function(now){
   this.r.cube(d.pos,[size,size,size],d.color,null,a);
  }
  this.drawTankHealthBars();
+ this.positionTankAimControls();
 };
 Game.prototype.spawnCratersideDebris=function(p,pos,rad,removed){
  if(!removed||rad<.8)return;
@@ -267,5 +304,83 @@ Game.prototype.drawTankHealthBars=function(){
   element.style.left=Math.round(projection[0]+rect.left)+'px';
   element.style.top=Math.round(projection[1]+rect.top)+'px';
   element.firstElementChild.style.width=clamp(tank.hp,0,100)+'%';
+ }
+};
+
+
+// v0.3.1 — touch-screen drags never change the turret; selected-tank arrows do.
+Game.prototype.canAdjustTankAim=function(){
+ return this.mode==='duel'&&this.turn==='player'&&!!this.tankSelected&&!this.movingPath&&!this.paused&&!this.projectiles.length;
+};
+Game.prototype.nudgeTankAim=function(horizontal,vertical,degrees=2){
+ if(!this.canAdjustTankAim())return false;
+ const delta=degrees*Math.PI/180;
+ if(horizontal){
+  this.orbit=Math.atan2(Math.sin(this.orbit+horizontal*delta),Math.cos(this.orbit+horizontal*delta));
+  this.player.turret=this.orbit;
+ }
+ if(vertical){
+  this.aimPitch=clamp((this.aimPitch??this.player.elev)+vertical*delta,8*Math.PI/180,82*Math.PI/180);
+  this.player.elev=this.aimPitch;
+ }
+ this._arcCache=null;
+ return true;
+};
+Game.prototype.positionTankAimControls=function(){
+ const el=this.dom('tankAimControls');if(!el)return;
+ if(!this.canAdjustTankAim()||!this.lastCamera){
+  el.classList.remove('visible');this.heldAim=null;
+  for(const id of ['aimUp','aimDown','aimLeft','aimRight'])this.dom(id).classList.remove('held');
+  return;
+ }
+ const rect=this.canvas.getBoundingClientRect();
+ const p=v03Project(this.lastCamera,[this.player.x,this.player.y+1.55,this.player.z],rect.width,rect.height);
+ if(!p||p[0]<-12||p[1]<-12||p[0]>rect.width+12||p[1]>rect.height+12){
+  el.classList.remove('visible');return;
+ }
+ const padx=rect.width<720?81:94,pady=rect.width<720?83:94;
+ el.style.left=(rect.left+clamp(p[0],padx,Math.max(padx,rect.width-padx)))+'px';
+ el.style.top=(rect.top+clamp(p[1],pady,Math.max(pady,rect.height-pady)))+'px';
+ el.classList.add('visible');
+};
+// Numerically simulate the whole shot but return only the first ~55% of samples.
+// No enemy position enters the calculation, and the impact point is never displayed.
+Game.prototype.predict=function(){
+ const tank=this.player;if(!tank||!this.world)return [];
+ const key=[tank.x.toFixed(2),tank.y.toFixed(2),tank.z.toFixed(2),tank.aimYaw().toFixed(4),tank.elev.toFixed(4),tank.power.toFixed(2),this.wind.toFixed(3)].join('|');
+ if(this._arcCache&&this._arcCache.key===key&&this.time-this._arcCache.time<.12)return this._arcCache.points;
+ let pos=tank.muzzle(),v=V3.mul(tank.direction(),tank.power*.94),samples=[[...pos]];
+ const dt=1/60;
+ for(let i=0;i<540;i++){
+  v[0]+=this.wind*.36*dt;v[1]-=21*dt;
+  pos=V3.add(pos,V3.mul(v,dt));
+  if(i%6===5)samples.push([...pos]);
+  const outside=pos[1]<=0||pos[1]>=100||Math.abs(pos[0])>=56||Math.abs(pos[2])>=56;
+  if(outside||this.world.solid(...pos)||(i%3===0&&this.world.propHit&&this.world.propHit(...pos))){
+   if(i%6!==5)samples.push([...pos]);
+   break;
+  }
+ }
+ const visible=samples.slice(0,Math.max(2,Math.ceil(samples.length*.55)));
+ this._arcCache={key,time:this.time,points:visible,fullLength:samples.length};
+ return visible;
+};
+// Connected translucent arc, brighter near the tank and gently fading halfway out.
+Game.prototype.renderAimTrajectory=function(){
+ if(this.turn!=='player'||this.mode!=='duel'||this.paused||this.movingPath)return;
+ const points=this.predict();if(points.length<2)return;
+ const r=this.r,count=Math.min(points.length-1,38);
+ for(let i=1;i<=count;i++){
+  const p=points[i-1],q=points[i],d=V3.sub(q,p),length=V3.len(d);
+  if(length<.001)continue;
+  const up=V3.mul(d,1/length),ref=Math.abs(up[1])>.95?[1,0,0]:[0,1,0];
+  const right=V3.norm(V3.cross(ref,up)),front=V3.norm(V3.cross(right,up));
+  const rot=M4.id();
+  rot[0]=right[0];rot[1]=right[1];rot[2]=right[2];
+  rot[4]=up[0];rot[5]=up[1];rot[6]=up[2];
+  rot[8]=front[0];rot[9]=front[1];rot[10]=front[2];
+  const fade=1-i/(count+1),alpha=.23+.36*fade,width=.34+.08*fade;
+  r.draw(r.cyl,M4.trs(V3.mul(V3.add(p,q),.5),rot,[width,length,width]),[1,.87,.52],alpha);
+  if(i%3===0)r.cube(q,[.31,.31,.31],[1,.97,.73],null,alpha*.75);
  }
 };
