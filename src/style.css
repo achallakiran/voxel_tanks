@@ -110,3 +110,36 @@ h1 em{display:block;color:var(--gold);font-style:normal}
 .enemyTankBar .tankHealthFill{background:linear-gradient(90deg,#d75a44,#eaaa68)}
 @media(max-width:720px){.movesPill{padding:6px 8px;gap:7px}#moveTokens{gap:4px}#moveTokens span{width:9px;height:9px}#weaponPanel{width:148px}.weaponToggle{gap:5px;min-height:56px;padding:4px 5px}.weaponToggle canvas{width:39px;height:39px;flex-basis:39px}.weaponToggleMeta strong{font-size:10px}.weaponToggleHint{font-size:7px}.weaponChevron{font-size:17px}#weaponPanel .weaponChoices{width:229px;padding:7px;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}#weaponPanel .weaponPick{height:65px}#weaponPanel .weaponPick canvas{width:44px;height:44px}#weaponPanel .weaponPick .weaponName{font-size:8px}.verticalPower{width:44px;height:153px}.verticalPower input[type=range]{width:103px;height:25px;top:66px;left:-30px}.verticalPower output{font-size:10px}.verticalPower>span{font-size:7px}.rightWeapons{gap:6px}#hud .fireButton{min-width:73px;height:69px;font-size:16px}#hud #bottom{gap:6px}.tankHealthBar{width:64px;height:8px}}
 @media(max-height:370px){.verticalPower{height:137px}.verticalPower input[type=range]{width:91px;top:61px;left:-24px}#hud .fireButton{height:62px}#hud #bottom{bottom:4px}#weaponPanel .weaponChoices{bottom:calc(100% + 3px)}}
+
+/* v0.3.1 — anchored, deliberate turret controls shown only on tank selection. */
+#tankAimControls{
+ position:absolute;left:-500px;top:-500px;width:180px;height:168px;
+ z-index:13;transform:translate(-50%,-50%);pointer-events:none;
+ opacity:0;visibility:hidden;transition:opacity .14s ease-out;
+ filter:drop-shadow(0 5px 12px rgba(0,0,0,.45));
+}
+#tankAimControls.visible{opacity:1;visibility:visible}
+#tankAimControls .aimArrow{
+ pointer-events:auto;touch-action:none;position:absolute;
+ display:grid;place-items:center;width:45px;height:45px;
+ padding:0;color:#ffe9ad;font-size:21px;font-weight:900;
+ border:1px solid rgba(255,225,157,.72);border-radius:12px;
+ background:linear-gradient(155deg,rgba(23,52,55,.92),rgba(8,29,36,.87));
+ box-shadow:inset 0 1px 0 rgba(255,252,228,.20),0 5px 16px rgba(0,0,0,.37);
+ -webkit-tap-highlight-color:transparent;
+}
+#tankAimControls .aimArrow:active,
+#tankAimControls .aimArrow.held{
+ background:linear-gradient(140deg,rgba(255,215,129,.83),rgba(198,133,45,.88));
+ color:#172930;transform:scale(.96);
+}
+#tankAimControls .aimUp{left:67px;top:0}
+#tankAimControls .aimDown{left:67px;bottom:0}
+#tankAimControls .aimLeft{left:0;top:61px}
+#tankAimControls .aimRight{right:0;top:61px}
+@media(max-width:720px){
+ #tankAimControls{width:156px;height:154px}
+ #tankAimControls .aimArrow{width:42px;height:42px;border-radius:11px;font-size:19px}
+ #tankAimControls .aimUp,#tankAimControls .aimDown{left:57px}
+ #tankAimControls .aimLeft,#tankAimControls .aimRight{top:56px}
+}
