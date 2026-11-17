@@ -71,3 +71,42 @@ h1 em{display:block;color:var(--gold);font-style:normal}
 #moveControls button:disabled{opacity:.28}
 @media(max-width:720px){#moveControls{bottom:104px;left:12px;padding:4px;gap:4px}#moveControls .iconButton{min-width:31px;min-height:31px;font-size:17px}#moveControls b{font-size:15px}}
 @media(max-height:370px){#moveControls{bottom:83px}}
+
+/* v0.3: single-pause tactical HUD, visual dropdown, right-side vertical power. */
+#hud .hudTop{top:max(9px,env(safe-area-inset-top));left:max(13px,env(safe-area-inset-left));right:max(13px,env(safe-area-inset-right));align-items:center;pointer-events:none}
+#hud .hudTop>*{pointer-events:auto}
+#hud #bottom{display:flex;justify-content:space-between;align-items:flex-end;left:max(14px,env(safe-area-inset-left));right:max(14px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));gap:12px;pointer-events:none}
+#hud #bottom>*{pointer-events:auto}
+.movesPill{background:rgba(8,26,33,.79);border:1px solid rgba(240,217,143,.22);border-radius:11px;display:flex;gap:10px;align-items:center;padding:9px 11px;backdrop-filter:blur(12px)}
+.movesGlyph{color:#f4ce82;font-weight:900;font-size:17px}
+#moveTokens{display:flex;align-items:center;gap:5px}
+#moveTokens span{display:block;width:11px;height:11px;border:1px solid rgba(242,221,160,.48);border-radius:2px;transform:rotate(45deg)}
+#moveTokens span.ready{background:linear-gradient(145deg,#ffe7a5,#e6aa59);box-shadow:0 0 8px rgba(245,198,106,.30)}
+#moveTokens span.spent{background:rgba(188,208,191,.12);border-color:rgba(188,208,191,.18)}
+#weaponPanel{position:relative;display:block;width:205px;max-width:45vw;min-width:0;flex:0 0 auto;padding:0;border:0;background:none;box-shadow:none;overflow:visible}
+.weaponToggle{display:flex;gap:9px;align-items:center;width:100%;min-height:68px;background:rgba(9,26,33,.9);border:1px solid rgba(255,221,140,.45);border-radius:12px;backdrop-filter:blur(13px);color:var(--ink);padding:7px 8px;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.weaponToggle canvas{display:block;width:50px;height:50px;object-fit:contain;flex:0 0 50px;border:1px solid rgba(255,220,151,.19);border-radius:8px;background:linear-gradient(145deg,rgba(138,156,143,.23),rgba(26,49,50,.65))}
+.weaponToggleMeta{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;min-width:0;flex:1}
+.weaponToggleHint{color:#9eb9ad;font-size:8px;font-weight:900;letter-spacing:.11em}
+.weaponToggleMeta strong{font-size:12px;font-weight:900;letter-spacing:.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.weaponChevron{font-size:22px;color:var(--gold)}
+#weaponPanel .weaponChoices{position:absolute;bottom:calc(100% + 9px);left:0;display:none;width:max(236px,100%);max-width:min(400px,90vw);padding:10px;background:rgba(8,25,32,.96);border:1px solid rgba(254,220,153,.4);border-radius:14px;box-shadow:0 15px 35px #0009;backdrop-filter:blur(15px);grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;z-index:6;overflow:visible}
+#weaponPanel.expanded .weaponChoices{display:grid}
+#weaponPanel .weaponPick{min-width:0;flex:none;width:100%;height:76px;background:linear-gradient(145deg,rgba(71,99,94,.4),rgba(17,35,41,.9));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:1px solid rgba(207,230,212,.18);border-radius:10px;padding:3px}
+#weaponPanel .weaponPick canvas{width:52px;height:52px;max-width:100%}
+#weaponPanel .weaponPick .weaponName{font-size:9px;color:#dce6d9;font-weight:800;line-height:1}
+#weaponPanel .weaponPick.selected{border:2px solid #ffc66d;background:linear-gradient(145deg,rgba(172,112,40,.3),rgba(35,47,48,.94))}
+.rightWeapons{display:flex;align-items:flex-end;gap:10px}
+.verticalPower{position:relative;display:flex;align-items:center;flex-direction:column;justify-content:space-between;width:56px;height:180px;padding:8px 0 7px;border:1px solid rgba(254,218,142,.35);border-radius:12px;background:rgba(7,27,35,.83);backdrop-filter:blur(12px)}
+.verticalPower output{font-variant-numeric:tabular-nums;font-size:11px;color:#ffe0a0;font-weight:1000}
+.verticalPower>span{font-weight:900;letter-spacing:.05em;color:#c0d1c3;font-size:9px}
+.verticalPower input[type=range]{position:absolute;width:130px;height:28px;top:77px;left:-37px;transform:rotate(-90deg);margin:0;accent-color:#ffca78;cursor:pointer;touch-action:none}
+#hud .fireButton{min-width:86px;height:77px;border-radius:15px;font-size:19px}
+#hud #help{max-width:60vw;left:50%;top:max(69px,calc(env(safe-area-inset-top) + 62px));white-space:normal}
+#hud #radar,#hud #joyBase,#hud #moveControls{display:none!important}
+#tankHealthLayer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.tankHealthBar{position:absolute;left:-100px;top:-100px;transform:translate(-50%,-50%);width:76px;height:9px;border-radius:8px;border:2px solid rgba(8,21,26,.82);background:rgba(24,35,32,.85);box-shadow:0 1px 7px #06141cc4;opacity:0;transition:opacity .15s linear}
+.tankHealthFill{height:100%;width:100%;border-radius:4px;background:linear-gradient(90deg,#51b779,#a9e5a9);transition:width .25s ease}
+.enemyTankBar .tankHealthFill{background:linear-gradient(90deg,#d75a44,#eaaa68)}
+@media(max-width:720px){.movesPill{padding:6px 8px;gap:7px}#moveTokens{gap:4px}#moveTokens span{width:9px;height:9px}#weaponPanel{width:148px}.weaponToggle{gap:5px;min-height:56px;padding:4px 5px}.weaponToggle canvas{width:39px;height:39px;flex-basis:39px}.weaponToggleMeta strong{font-size:10px}.weaponToggleHint{font-size:7px}.weaponChevron{font-size:17px}#weaponPanel .weaponChoices{width:229px;padding:7px;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}#weaponPanel .weaponPick{height:65px}#weaponPanel .weaponPick canvas{width:44px;height:44px}#weaponPanel .weaponPick .weaponName{font-size:8px}.verticalPower{width:44px;height:153px}.verticalPower input[type=range]{width:103px;height:25px;top:66px;left:-30px}.verticalPower output{font-size:10px}.verticalPower>span{font-size:7px}.rightWeapons{gap:6px}#hud .fireButton{min-width:73px;height:69px;font-size:16px}#hud #bottom{gap:6px}.tankHealthBar{width:64px;height:8px}}
+@media(max-height:370px){.verticalPower{height:137px}.verticalPower input[type=range]{width:91px;top:61px;left:-24px}#hud .fireButton{height:62px}#hud #bottom{bottom:4px}#weaponPanel .weaponChoices{bottom:calc(100% + 3px)}}
