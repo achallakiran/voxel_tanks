@@ -45,4 +45,30 @@ assert.ok(world.debrisEvents.length,'Tree impact must queue wood/leaves debris')
 const removed=world.editSphere(-15,world.height(-15,-15)-1,-15,3,0);if(removed){world.queueEjecta(-15,world.height(-15,-15),-15,3,removed);assert.ok(world.ejecta.length,'Crater must schedule persistent rim deposits');world.tickDestruction(.25);}
 assert.equal(typeof Game.prototype.drawTankHealthBars,'function');
 assert.equal(typeof Game.prototype.isPlayerTankTap,'function');
+
+const aimTest=Object.create(Game.prototype);
+Object.assign(aimTest,{player,enemy,world,wind:0,time:0,mode:'duel',turn:'player',tankSelected:true,movingPath:null,paused:false,projectiles:[],orbit:0,aimPitch:player.elev});
+const startElevation=player.elev;
+assert.equal(aimTest.nudgeTankAim(0,1),true,'Selected tank must respond to arrow input');
+assert.ok(Math.abs(player.elev-startElevation-2*Math.PI/180)<.000001,'Single aim tap must adjust elevation exactly two degrees');
+assert.equal(aimTest.nudgeTankAim(-1,0),true);
+assert.ok(Math.abs(aimTest.orbit+2*Math.PI/180)<.000001,'Left arrow must change bearing by two degrees');
+const noDragAngle=player.elev,noDragBearing=player.turret;
+aimTest.handleSceneDrag(60,-50);
+assert.equal(player.elev,noDragAngle,'Dragging the camera must not change elevation');
+assert.equal(player.turret,noDragBearing,'Dragging the camera must not change bearing');
+const partial=aimTest.predict();
+assert.ok(partial.length>=2,'Trajectory must show a meaningful initial arc');
+assert.ok(aimTest._arcCache.fullLength>=partial.length,'Trajectory preview must not exceed simulated shot');
+assert.ok(partial.length<=Math.max(2,Math.ceil(aimTest._arcCache.fullLength*.55)),'Preview stops around the middle of the estimated flight');
+const alphaValues=[];
+aimTest.r={cyl:{},draw(mesh,model,tint,alpha){alphaValues.push(alpha)},cube(){}};
+aimTest.renderAimTrajectory();
+assert.ok(alphaValues.some(a=>a<.65&&a>.15),'A translucent partial flight arc must render');
+aimTest.tankSelected=false;
+assert.equal(aimTest.nudgeTankAim(1,0),false,'Unselected tank cannot be aimed via arrows');
+for(const id of ['tankAimControls','aimUp','aimDown','aimLeft','aimRight'])assert.ok(rd('src/shell.html').includes('id="'+id+'"'),'Missing directional aim control '+id);
+assert.ok(rd('src/style.css').includes('#tankAimControls .aimArrow'),'Aim arrows must have styled on-tank hit areas');
+assert.ok(!rd('src/game.js').includes('this.predict().entries()'),'Old opaque ballistic dots must be removed');
+
 console.log('PASS — six single-action movements, prop collisions, falling trees, crater ejecta, enemy estimation, world-anchored health UI, camera, offline bundle.');
