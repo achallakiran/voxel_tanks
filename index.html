@@ -154,6 +154,147 @@ h1 em{display:block;color:var(--gold);font-style:normal}
  #tankAimControls .aimLeft,#tankAimControls .aimRight{top:56px}
 }
 
+/* v0.3.2 — deliberate minimal landscape HUD. Battlefield takes priority. */
+#hud .hudTop{justify-content:center;align-items:flex-start}
+#hud .hudTop .centerTop{
+ position:absolute;left:50%;top:0;transform:translateX(-50%);
+ padding:5px 10px;background:rgba(5,24,30,.25);
+ border-color:rgba(230,246,233,.12);backdrop-filter:blur(3px);
+ font-size:10px;border-radius:8px;
+}
+#hud .hudTop .centerTop small{font-size:8px;opacity:.75}
+#hud .hudTop .actionsTop{position:absolute;right:0;top:0}
+#hud .hudTop #pauseButton{
+ min-width:35px;min-height:34px;background:rgba(10,27,36,.52);
+ border-color:rgba(226,244,232,.17);border-radius:9px;font-size:18px;
+}
+#hud .movesPill,#hud #moveTokens,#hud #help{display:none!important}
+#hud #bottom{
+ position:absolute;bottom:max(10px,env(safe-area-inset-bottom));
+ left:max(8px,env(safe-area-inset-left));
+ right:max(10px,env(safe-area-inset-right));
+ height:178px;display:block;max-width:none;pointer-events:none;
+}
+#hud #bottom > *{pointer-events:auto}
+#hud #bottom .verticalPower{
+ position:absolute;left:0;bottom:0;top:auto;right:auto;
+ display:block;width:39px;height:177px;min-width:0;max-width:none;
+ padding:0;border:1px solid rgba(243,223,171,.29);
+ border-radius:12px;background:rgba(8,30,38,.58);
+ backdrop-filter:blur(9px);box-shadow:0 6px 16px rgba(0,0,0,.14);
+}
+#hud #bottom .verticalPower output{
+ position:absolute;top:33px;left:0;right:0;text-align:center;
+ font-size:10px;letter-spacing:-.03em;font-weight:900;color:#ffe4a9;
+}
+#hud #bottom .verticalPower input[type=range]{
+ position:absolute;top:94px;left:-34px;width:106px;height:22px;
+ margin:0;padding:0;transform:rotate(-90deg);
+ accent-color:#ffd07f;touch-action:none;cursor:pointer;
+}
+#hud #bottom .verticalPower .powerStep{
+ position:absolute;left:4px;width:29px;height:27px;min-height:0;
+ display:grid;place-items:center;border:1px solid rgba(255,222,144,.35);
+ border-radius:7px;background:rgba(51,70,66,.66);
+ color:#ffe7af;font-size:19px;font-weight:800;line-height:1;
+ touch-action:manipulation;pointer-events:auto;
+}
+#hud #bottom .verticalPower #powerPlus{top:3px}
+#hud #bottom .verticalPower #powerMinus{bottom:3px}
+#hud #bottom .verticalPower .powerStep:active{
+ background:rgba(255,203,113,.56);color:#142931;
+}
+#hud #bottom #weaponPanel{
+ position:absolute;right:91px;bottom:2px;left:auto;top:auto;
+ width:52px;max-width:none;min-width:0;height:52px;
+ flex:none;overflow:visible;background:transparent;
+}
+#hud #bottom #weaponPanel .weaponToggle{
+ position:relative;display:flex;justify-content:center;align-items:center;
+ padding:4px;width:52px;height:52px;min-height:52px;border-radius:11px;
+ gap:0;background:rgba(7,26,35,.72);
+ border-color:rgba(255,217,138,.34);
+ backdrop-filter:blur(10px);
+}
+#hud #bottom #weaponPanel .weaponToggle canvas{
+ width:43px;height:43px;flex:0 0 43px;background:transparent;border:0;
+}
+.visuallyHidden{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+#hud #bottom #weaponPanel .weaponChevron{
+ position:absolute;right:1px;bottom:0;line-height:11px;
+ font-size:12px;color:#ffe3ab;background:rgba(7,23,30,.7);
+ border-radius:4px;min-width:13px;text-align:center;
+}
+#hud #bottom #weaponPanel .weaponChoices{
+ position:absolute;bottom:calc(100% + 7px);top:auto;
+ left:auto;right:0;max-width:min(306px,calc(100vw - 24px));
+ width:260px;grid-template-columns:repeat(3,minmax(0,1fr));
+ background:rgba(7,25,31,.93);
+}
+#hud #bottom #fire{
+ position:absolute;right:0;bottom:0;
+ width:77px;min-width:77px;height:67px;
+ border-radius:14px;font-size:17px;
+ box-shadow:0 5px 18px rgba(0,0,0,.17);
+}
+#hud #joyBase{
+ display:none!important;position:absolute;
+ left:max(64px,calc(env(safe-area-inset-left) + 59px));
+ bottom:max(12px,env(safe-area-inset-bottom));
+ top:auto;right:auto;width:90px;height:90px;
+ border:1px solid rgba(222,247,226,.26);border-radius:50%;
+ background:rgba(9,34,42,.35);
+ backdrop-filter:blur(2px);
+ pointer-events:auto;touch-action:none;z-index:12;
+}
+#hud.canMove #joyBase{display:block!important}
+#hud #joyKnob{
+ position:absolute;width:38px;height:38px;left:25px;top:25px;
+ border-radius:50%;border:1px solid rgba(255,238,192,.79);
+ background:linear-gradient(160deg,rgba(243,208,139,.9),rgba(179,138,73,.75));
+ box-shadow:0 3px 11px rgba(0,0,0,.24);pointer-events:none;
+}
+#hud .joyCompass{position:absolute;inset:0;display:grid;place-items:center;
+ color:rgba(229,244,218,.18);font-size:43px;line-height:1;
+ pointer-events:none}
+#hud #movementGauge{
+ position:absolute;left:max(65px,calc(env(safe-area-inset-left) + 58px));
+ bottom:max(112px,calc(env(safe-area-inset-bottom) + 103px));
+ width:122px;height:15px;display:flex;align-items:center;gap:6px;
+ pointer-events:none;opacity:.50;transition:opacity .15s;
+}
+#hud.canMove #movementGauge{opacity:1}
+#hud .gaugeLabel{font-size:8px;font-weight:900;letter-spacing:.08em;
+ color:#e1eacb;text-shadow:0 1px 5px #061820}
+#hud .movementTrack{display:block;position:relative;flex:1;height:7px;
+ border:1px solid rgba(243,222,171,.46);
+ background:rgba(10,29,34,.55);border-radius:10px;overflow:hidden}
+#hud .movementFill{position:absolute;top:0;bottom:0;left:0;width:100%;
+ background:linear-gradient(90deg,#8fdcba,#f6d486);border-radius:8px;
+ transition:width 65ms linear}
+@media(max-width:720px){
+ #hud #bottom{height:153px;bottom:max(6px,env(safe-area-inset-bottom));}
+ #hud #bottom .verticalPower{height:151px;width:34px;border-radius:9px}
+ #hud #bottom .verticalPower .powerStep{left:3px;width:26px;height:24px;font-size:17px}
+ #hud #bottom .verticalPower output{top:30px;font-size:9px}
+ #hud #bottom .verticalPower input[type=range]{width:88px;top:79px;left:-28px;height:22px}
+ #hud #bottom #fire{width:68px;min-width:68px;height:61px;font-size:15px}
+ #hud #bottom #weaponPanel{right:75px;bottom:2px;width:45px;height:45px}
+ #hud #bottom #weaponPanel .weaponToggle{width:45px;height:45px;min-height:45px;padding:3px}
+ #hud #bottom #weaponPanel .weaponToggle canvas{width:39px;height:39px;flex-basis:39px}
+ #hud #bottom #weaponPanel .weaponChoices{width:220px;padding:6px;gap:5px}
+ #hud #joyBase{left:max(54px,calc(env(safe-area-inset-left) + 47px));bottom:10px;width:78px;height:78px}
+ #hud #joyKnob{left:22px;top:22px;width:32px;height:32px}
+ #hud #movementGauge{left:max(56px,calc(env(safe-area-inset-left) + 47px));bottom:96px;width:115px}
+}
+@media(max-height:370px){
+ #hud #bottom{bottom:4px;height:137px}
+ #hud #bottom .verticalPower{height:136px}
+ #hud #bottom .verticalPower input[type=range]{width:72px;top:72px;left:-20px}
+ #hud #movementGauge{bottom:88px}
+ #hud #joyBase{bottom:4px}
+}
+
 </style>
 </head>
 <body>
@@ -168,16 +309,16 @@ h1 em{display:block;color:var(--gold);font-style:normal}
       <button class="btn main" id="startDuel">▶ &nbsp; START BATTLE</button>
     </div>
     <div class="tips">
-      <b>TACTICAL ARTILLERY</b> &nbsp;•&nbsp; Six moves per tank &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; Deformable terrain
-      <div style="margin-top:6px">Tap your tank to reveal four aiming arrows. Tap or hold the arrows to rotate the turret or raise/lower the barrel. Adjust power on the right.</div>
-      <div style="margin-top:7px;color:#ffd577">While selected, tap nearby reachable ground to move (one of six moves), or tap the tank again to deselect. Camera dragging no longer changes aim.</div>
+      <b>TACTICAL ARTILLERY</b> &nbsp;•&nbsp; Per-turn movement meter &nbsp;•&nbsp; Six distinct weapons &nbsp;•&nbsp; Deformable terrain
+      <div style="margin-top:6px">Tap your tank for four precise aiming arrows. Set power on the far-left slider, or use + / − for single-step adjustments.</div>
+      <div style="margin-top:7px;color:#ffd577">Use the joystick to drive and steer. Your movement meter drains only as the tank travels and refills at the start of your next turn.</div>
     </div>
     <div id="errorMessage" style="display:none;background:#6e2121;color:white;margin-top:20px;border-radius:8px;padding:12px"></div>
   </main>
 </div>
 <div id="hud">
   <div class="hudTop">
-    <div class="movesPill" title="Six movement actions per match"><span class="movesGlyph">◈</span><div id="moveTokens"></div></div>
+    
     <div class="centerTop"><span id="round">ROUND 1/10</span><small id="wind">WIND · 0.0</small></div>
     <div class="actionsTop">
       <button class="iconButton" id="pauseButton" title="Pause, settings and main menu" aria-label="Pause and menu">Ⅱ</button>
@@ -193,24 +334,31 @@ h1 em{display:block;color:var(--gold);font-style:normal}
     <div class="tankHealthBar playerTankBar" id="playerTankHealth"><div class="tankHealthFill"></div></div>
     <div class="tankHealthBar enemyTankBar" id="enemyTankHealth"><div class="tankHealthFill"></div></div>
   </div>
-  <div id="help">TAP YOUR TANK TO MOVE &nbsp;•&nbsp; <span id="moveLeft">6</span> MOVES LEFT</div>
+  <div id="help">TAP YOUR TANK TO AIM &nbsp;•&nbsp; USE JOYSTICK TO DRIVE</div>
+  <span id="moveLeft" hidden>8</span>
+  <div id="movementGauge" role="progressbar" aria-label="Movement remaining in this turn" aria-valuemin="0" aria-valuemax="8" aria-valuenow="8">
+    <span class="gaugeLabel">MOVE</span><span class="movementTrack"><span id="moveMeterFill" class="movementFill"></span></span>
+  </div>
+  <div id="joyBase" role="group" aria-label="Tank drive and steer joystick">
+    <div class="joyCompass" aria-hidden="true">✣</div>
+    <div id="joyKnob"></div>
+  </div>
   <div id="message" aria-live="polite"></div><div id="subMessage"></div>
   <div id="bottom">
+    <div class="verticalPower">
+      <button id="powerPlus" class="powerStep" type="button" aria-label="Increase power by one" title="Power +1">+</button>
+      <output id="powerValue" for="power">43%</output>
+      <input id="power" type="range" min="22" max="75" value="43" step="1" aria-label="Projectile firing power">
+      <button id="powerMinus" class="powerStep" type="button" aria-label="Decrease power by one" title="Power -1">−</button>
+    </div>
     <div class="weaponPanel" id="weaponPanel">
-      <button id="weaponToggle" class="weaponToggle" aria-label="Choose weapon" aria-expanded="false" aria-controls="weapons">
+      <button id="weaponToggle" class="weaponToggle" aria-label="Select artillery shell" aria-expanded="false" aria-controls="weapons" title="Select artillery shell">
         <canvas id="activeWeaponArt" width="56" height="56" aria-hidden="true"></canvas>
-        <span class="weaponToggleMeta"><span class="weaponToggleHint">WEAPON</span><strong id="weaponLabel">CANNON</strong></span><span class="weaponChevron">⌄</span>
+        <span id="weaponLabel" class="visuallyHidden">CANNON</span><span class="weaponChevron" aria-hidden="true">⌄</span>
       </button>
       <div class="weaponChoices" id="weapons"></div>
     </div>
-    <div class="rightWeapons">
-      <div class="verticalPower">
-        <output id="powerValue" for="power">43%</output>
-        <input id="power" type="range" min="22" max="75" value="43" step="1" aria-label="Projectile firing power">
-        <span>POWER</span>
-      </div>
-      <button class="fireButton" id="fire" aria-label="Fire artillery shell">FIRE</button>
-    </div>
+    <button class="fireButton" id="fire" aria-label="Fire artillery shell">FIRE</button>
   </div>
   <div id="turnNotice">
     <div><h2 id="turnTitle">VICTORY</h2><p id="turnDetails"></p><button class="btn main" id="turnAction">▶ PLAY AGAIN</button></div>
@@ -228,7 +376,7 @@ h1 em{display:block;color:var(--gold);font-style:normal}
     </label>
     <label>Sound level <input id="volume" type="range" min="0" max="1" value=".45" step=".05" aria-label="Volume"></label>
     
-    <p><b>Controls:</b> Tap your tank to display the four precise aiming arrows. Press or hold an arrow to adjust the turret. Use the vertical power slider to set firing strength. While selected, tap reachable terrain to move. Press Pause for settings, restart or the main menu.</p>
+    <p><b>Controls:</b> Tap your tank for four precise aiming arrows. Press or hold the arrows to adjust the barrel. Drive and steer using the left joystick; movement distance refills each turn. Change power using the far-left slider or its + / − buttons. Pause contains settings, restart and the main menu.</p>
     <div class="modalButtons">
       <button class="btn main" id="closePanel">▶ RESUME / CLOSE</button>
       <button class="btn" id="restartButton">↻ RESTART</button>
@@ -876,7 +1024,7 @@ Tank.prototype.updateHeight=function(dt,world){
 
 'use strict';
 // v0.3: camera-to-barrel aiming, direct tank selection, discrete movement and impact staging.
-const V03_MAX_STEP=MOVE_RULES.unit;
+const V03_MAX_STEP=8; // AI-only navigation; player joystick handles movement.
 const V03_PLAN=SurfaceNavigator.prototype.plan;
 SurfaceNavigator.prototype.plan=function(tank,x,z){
  if(Math.hypot(x-tank.x,z-tank.z)>V03_MAX_STEP+1.25)return null;
@@ -973,22 +1121,12 @@ Game.prototype.bind=function(){
   if(drift>10||this.mode!=='duel'||this.turn!=='player'||this.paused||this.movingPath)return;
   if(this.isPlayerTankTap(e.clientX,e.clientY)){
    this.tankSelected=!this.tankSelected;
-   if(this.tankSelected&&this.moveCredits>0)this.computeMovementHalo();
+   // Tank selection is for the four precise turret arrows.
    this.audio.select();
-   if(!this.tankSelected)this.movementHalo=[];
+   this.movementHalo=[];
    this.refreshMoveUi();return;
   }
-  if(!this.tankSelected)return;
-  if(this.moveCredits<=0){this.toast('NO MOVES LEFT');return;}
-  let hit=this.pickGround(e.clientX,e.clientY);
-  if(!hit){this.toast('NO VALID GROUND');return;}
-  let plan=this.navigator.plan(this.player,hit[0],hit[2]);
-  if(!plan){this.toast('TOO FAR OR BLOCKED');return;}
-  this.moveCredits--;this.moveLeft=this.moveCredits;
-  this.aimWorldHeading=this.player.aimYaw();
-  this.movingPath={points:plan.points,next:1};
-  this.tankSelected=false;this.movementHalo=[];
-  this.refreshMoveUi();this.audio.select();
+  // Ground taps do not drive; joystick movement is exclusive.
  });
 };
 Game.prototype.isPlayerTankTap=function(px,py){
@@ -1005,15 +1143,7 @@ Game.prototype.isPlayerTankTap=function(px,py){
  let miny=Math.min(...corners.map(c=>c[1]))-15,maxy=Math.max(...corners.map(c=>c[1]))+16;
  return px-rect.left>=minx&&px-rect.left<=maxx&&py-rect.top>=miny&&py-rect.top<=maxy;
 };
-Game.prototype.computeMovementHalo=function(){
- this.movementHalo=[];
- let t=this.player;
- for(let i=0;i<24;i++){
-  let a=i*Math.PI*2/24,x=t.x+Math.sin(a)*V03_MAX_STEP*.86,z=t.z+Math.cos(a)*V03_MAX_STEP*.86;
-  let plan=this.navigator.plan(t,x,z);
-  if(plan){let p=plan.points[plan.points.length-1];this.movementHalo.push([p[0],p[1]+.32,p[2]]);}
- }
-};
+Game.prototype.computeMovementHalo=function(){this.movementHalo=[];};
 // Camera drags must not change artillery aim. Precise on-tank arrows own the controls.
 Game.prototype.handleSceneDrag=function(){};
 const V03_START=Game.prototype.start;
@@ -1024,7 +1154,7 @@ Game.prototype.start=function(mode){
  if(this.dom('weaponPanel'))this.dom('weaponPanel').classList.remove('expanded');
  if(this.dom('weaponToggle'))this.dom('weaponToggle').setAttribute('aria-expanded','false');
  this.refreshMoveUi();this.pickWeapon(0);
- this.banner('TAP TANK TO AIM OR MOVE','FOUR ARROWS • SIX MOVES • PARTIAL FLIGHT ARC',2.5);
+ this.banner('DRIVE • AIM • FIRE','JOYSTICK TO DRIVE • TAP TANK FOR AIM ARROWS',2.4);
 };
 const V03_VOLLEY=Game.prototype.afterVolley;
 Game.prototype.afterVolley=function(){
@@ -1044,7 +1174,7 @@ const V03_MOVE_UI=Game.prototype.refreshMoveUi;
 Game.prototype.refreshMoveUi=function(){
  V03_MOVE_UI.call(this);
  let indicator=this.dom('moveTokens');
- if(indicator)indicator.innerHTML=Array.from({length:6},(_,i)=>'<span class="'+(i<(this.moveCredits??6)?'ready':'spent')+'"></span>').join('');
+ // No movement diamonds; distance is shown by the gauge.
  if(this.dom('moveControls'))this.dom('moveControls').style.display='none';
  if(this.dom('hud'))this.dom('hud').classList.toggle('selectedTank',!!this.tankSelected);
  if(this.dom('moveLeft'))this.dom('moveLeft').textContent=this.moveCredits??6;
@@ -1123,14 +1253,6 @@ Game.prototype.camera=function(){
 const V03_DRAW=Game.prototype.draw;
 Game.prototype.draw=function(now){
  V03_DRAW.call(this,now);
- if(this.mode==='duel'&&this.tankSelected&&this.turn==='player'&&!this.movingPath){
-  for(let p of this.movementHalo||[])this.r.cube(p,[.23,.09,.23],[.98,.78,.37]);
-  for(let i=0;i<24;i++){
-   let a=i*Math.PI*2/24,t=this.player;
-   let px=t.x+Math.cos(a)*2.9,pz=t.z+Math.sin(a)*2.9;
-   this.r.cube([px,t.y+.12,pz],[.18,.12,.18],[.96,.78,.31]);
-  }
- }
  for(let d of this.debrisCloud||[]){
   let a=clamp((d.life-d.time)/d.life,.1,1),size=d.size*(.8+.2*a);
   this.r.cube(d.pos,[size,size,size],d.color,null,a);
@@ -1259,6 +1381,189 @@ Game.prototype.renderAimTrajectory=function(){
   r.draw(r.cyl,M4.trs(V3.mul(V3.add(p,q),.5),rot,[width,length,width]),[1,.87,.52],alpha);
   if(i%3===0)r.cube(q,[.31,.31,.31],[1,.97,.73],null,alpha*.75);
  }
+};
+
+
+'use strict';
+// Voxel Tanks v0.3.2 — distance-budget analog movement, deliberately minimal UI.
+// One distance meter per turn, not six match-wide action tokens.
+const DRIVE_TURN_DISTANCE=8;
+const DRIVE_FORWARD_SPEED=5.4;
+const DRIVE_REVERSE_SPEED=3.5;
+const DRIVE_TURN_SPEED=1.65;
+const DRIVE_DEAD_ZONE=.11;
+
+const DRIVE_OLD_BIND=Game.prototype.bind;
+Game.prototype.bind=function(){
+ DRIVE_OLD_BIND.call(this);
+ const base=this.dom('joyBase'),knob=this.dom('joyKnob');
+ if(!base||!knob)throw Error('Missing movement joystick');
+ let active=null;
+ const movePointer=e=>{
+  const rect=base.getBoundingClientRect();
+  const radius=Math.max(18,rect.width*.34);
+  const dx=e.clientX-(rect.left+rect.width*.5),dy=e.clientY-(rect.top+rect.height*.5);
+  const size=Math.hypot(dx,dy),factor=size?Math.min(1,radius/size):1;
+  const x=dx*factor,y=dy*factor;
+  this.joy.x=Math.abs(x/radius)<DRIVE_DEAD_ZONE?0:x/radius;
+  this.joy.y=Math.abs(y/radius)<DRIVE_DEAD_ZONE?0:-y/radius;
+  knob.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px)';
+ };
+ base.addEventListener('pointerdown',e=>{
+  if(active!==null||this.mode!=='duel'||this.turn!=='player'||this.paused)return;
+  e.preventDefault();e.stopPropagation();
+  active=e.pointerId;
+  try{base.setPointerCapture(e.pointerId)}catch(err){}
+  movePointer(e);
+ });
+ base.addEventListener('pointermove',e=>{
+  if(e.pointerId!==active)return;
+  e.preventDefault();movePointer(e);
+ });
+ const release=e=>{
+  if(e.pointerId!==active)return;
+  active=null;this.joy={x:0,y:0};knob.style.transform='translate(0px,0px)';
+ };
+ base.addEventListener('pointerup',release);
+ base.addEventListener('pointercancel',release);
+ base.addEventListener('lostpointercapture',release);
+ window.addEventListener('blur',()=>{this.resetDriveJoystick();active=null;});
+ const adjust=(id,delta)=>{
+  const button=this.dom(id);
+  if(!button)throw Error('Missing precision power button: '+id);
+  button.addEventListener('click',e=>{
+   e.preventDefault();
+   if(this.mode!=='duel'||this.turn!=='player'||this.paused)return;
+   this.setPowerExact(this.player.power+delta);
+  });
+ };
+ adjust('powerPlus',1);adjust('powerMinus',-1);
+};
+Game.prototype.resetDriveJoystick=function(){
+ this.joy={x:0,y:0};
+ const knob=this.dom('joyKnob');
+ if(knob)knob.style.transform='translate(0px,0px)';
+};
+Game.prototype.setPowerExact=function(value){
+ const next=clamp(Math.round(value),22,75);
+ this.player.power=next;
+ this.dom('power').value=String(next);
+ this.updateAimText();
+ this._arcCache=null;
+ return next;
+};
+Game.prototype.renderMovementGauge=function(){
+ if(this.movementRemaining===undefined)return;
+ const max=this.movementMax||DRIVE_TURN_DISTANCE;
+ const ratio=clamp(this.movementRemaining/max,0,1);
+ const fill=this.dom('moveMeterFill'),gauge=this.dom('movementGauge');
+ if(fill)fill.style.width=(ratio*100).toFixed(1)+'%';
+ if(gauge)gauge.setAttribute('aria-valuenow',String(Math.round(ratio*max*10)/10));
+ const active=this.mode==='duel'&&this.turn==='player'&&!this.paused;
+ const hud=this.dom('hud');
+ if(hud)hud.classList.toggle('canMove',active);
+ if(this.dom('moveLeft'))this.dom('moveLeft').textContent=this.movementRemaining.toFixed(1);
+};
+Game.prototype.driveByJoystick=function(dt){
+ if(this.mode!=='duel'||this.turn!=='player'||this.paused||this.projectiles.length)return;
+ const t=this.player,joy=this.joy||{x:0,y:0},keys=this.keys||{};
+ let move=clamp(((keys.KeyW||keys.ArrowUp)?1:0)-((keys.KeyS||keys.ArrowDown)?1:0)+joy.y,-1,1);
+ let steer=clamp(((keys.KeyD||keys.ArrowRight)?1:0)-((keys.KeyA||keys.ArrowLeft)?1:0)+joy.x,-1,1);
+ if(Math.abs(move)<DRIVE_DEAD_ZONE)move=0;
+ if(Math.abs(steer)<DRIVE_DEAD_ZONE)steer=0;
+ if(!move&&!steer){t.velocity=0;return;}
+ // Rotating in place does not consume fuel or sneak in extra translation.
+ if(steer){
+  const aim=t.aimYaw();
+  t.yaw+=steer*DRIVE_TURN_SPEED*dt;
+  t.turret=Math.atan2(Math.sin(aim-t.yaw),Math.cos(aim-t.yaw));
+  this.orbit=t.turret;
+ }
+ if(!move||this.movementRemaining<=0){t.velocity=0;return;}
+ const rawSpeed=(move>0?DRIVE_FORWARD_SPEED:DRIVE_REVERSE_SPEED)*move;
+ const requested=Math.min(Math.abs(rawSpeed)*dt,this.movementRemaining);
+ if(requested<.000001)return;
+ const signed=Math.sign(move)*requested;
+ const nx=t.x+Math.sin(t.yaw)*signed,nz=t.z+Math.cos(t.yaw)*signed;
+ if(Math.abs(nx)>this.world.W*.5-3||Math.abs(nz)>this.world.D*.5-3)return;
+ const nav=this.navigator||new SurfaceNavigator(this.world);
+ const startGround=nav.support(t.x,t.z,t.y+.95);
+ const nextGround=nav.support(nx,nz,t.y+.95);
+ if(nextGround===null||startGround===null||Math.abs(nextGround-startGround)>1.25){t.velocity=0;return;}
+ // A tank must fit around boulders, tree trunks and constructed walls.
+ const forwardX=Math.sin(t.yaw),forwardZ=Math.cos(t.yaw);
+ const testPoints=[[nx,nz],[nx+forwardX*.9,nz+forwardZ*.9],[nx-forwardX*.7,nz-forwardZ*.7]];
+ for(const [px,pz] of testPoints){
+  if(this.world.propHit&&this.world.propHit(px,nextGround+.9,pz)){t.velocity=0;return;}
+ }
+ t.x=nx;t.z=nz;t.trackPhase+=signed*1.35;
+ t.velocity=0;t.updateHeight(dt,this.world);
+ const actual=Math.hypot(nx-(nx-forwardX*signed),nz-(nz-forwardZ*signed));
+ this.movementRemaining=Math.max(0,this.movementRemaining-actual);
+};
+const DRIVE_OLD_START=Game.prototype.start;
+Game.prototype.start=function(mode){
+ DRIVE_OLD_START.call(this,'duel');
+ this.movementMax=DRIVE_TURN_DISTANCE;
+ this.movementRemaining=this.movementMax;
+ this.enemyMovementRemaining=this.movementMax;
+ this.enemyCredits=1;
+ this.moveLeft=this.movementRemaining;
+ this.tankSelected=false;this.movementHalo=[];this.movingPath=null;this.movePlan=null;
+ this.resetDriveJoystick();
+ this.renderMovementGauge();
+ this.banner('DRIVE • AIM • FIRE','JOYSTICK • TAP TANK FOR AIM • POWER +/-',2.1);
+};
+const DRIVE_OLD_AFTER=Game.prototype.afterVolley;
+Game.prototype.afterVolley=function(){
+ DRIVE_OLD_AFTER.call(this);
+ if(this.turn==='player'){
+  this.movementRemaining=this.movementMax||DRIVE_TURN_DISTANCE;
+  this.resetDriveJoystick();
+ }else if(this.turn==='enemy'){
+  this.enemyMovementRemaining=this.movementMax||DRIVE_TURN_DISTANCE;
+  this.enemyCredits=1; // The enemy can also reposition once, up to one turn's distance.
+  this.resetDriveJoystick();
+ }
+ this.moveLeft=this.movementRemaining;
+ this.renderMovementGauge();
+};
+const DRIVE_OLD_FIRE=Game.prototype.fire;
+Game.prototype.fire=function(){
+ DRIVE_OLD_FIRE.call(this);
+ if(this.turn!=='player')this.resetDriveJoystick();
+ this.renderMovementGauge();
+};
+const DRIVE_OLD_PANEL=Game.prototype.openPanel;
+Game.prototype.openPanel=function(){
+ this.resetDriveJoystick();DRIVE_OLD_PANEL.call(this);this.renderMovementGauge();
+};
+const DRIVE_OLD_CLOSE=Game.prototype.closePanel;
+Game.prototype.closePanel=function(){DRIVE_OLD_CLOSE.call(this);this.renderMovementGauge();};
+const DRIVE_OLD_UPDATE=Game.prototype.update;
+Game.prototype.update=function(dt){
+ // v0.2 turn simulation still handles ballistics and the enemy's terrain path.
+ // Stop its old free-driving/inertial motion; apply our constrained joystick drive after.
+ if(this.player)this.player.velocity=0;
+ const beforeEnemy=this.enemy?[this.enemy.x,this.enemy.z]:null;
+ DRIVE_OLD_UPDATE.call(this,dt);
+ if(beforeEnemy&&this.enemyMovementRemaining!==undefined){
+  const dist=Math.hypot(this.enemy.x-beforeEnemy[0],this.enemy.z-beforeEnemy[1]);
+  if(dist>0){
+   this.enemyMovementRemaining=Math.max(0,this.enemyMovementRemaining-dist);
+   if(this.enemyMovementRemaining<=.00001){this.enemyPath=null;this.enemyCredits=0;}
+  }
+ }
+ if(this.turn==='player'&&!this.paused)this.driveByJoystick(dt);
+ else if(this.joy&&(Math.abs(this.joy.x)>0||Math.abs(this.joy.y)>0))this.resetDriveJoystick();
+ if(this.movementRemaining!==undefined){
+  this.moveLeft=this.movementRemaining;
+  this.renderMovementGauge();
+ }
+};
+const DRIVE_OLD_AIM=Game.prototype.canAdjustTankAim;
+Game.prototype.canAdjustTankAim=function(){
+ return DRIVE_OLD_AIM.call(this)&&Math.abs(this.joy?.x||0)<DRIVE_DEAD_ZONE&&Math.abs(this.joy?.y||0)<DRIVE_DEAD_ZONE;
 };
 
 </script>
