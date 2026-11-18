@@ -7,7 +7,7 @@ import {generate} from '../scripts/build.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const rd=p=>fs.readFileSync(path.join(root,p),'utf8');
 assert.equal(rd('index.html'),generate(),'Published HTML must match modular source. Run npm run build.');
-const bundle=['src/renderer.js','src/world.js','src/tanks.js','src/game.js','src/tactics.js','src/v03.js'].map(rd).join('\n\n');
+const bundle=['src/renderer.js','src/world.js','src/tanks.js','src/game.js','src/tactics.js','src/v03.js','src/mobility.js'].map(rd).join('\n\n');
 const ctx={window:{addEventListener(){}},Math,Float32Array,Uint8Array,Uint32Array,Map,Set,console};
 vm.runInNewContext(bundle+';globalThis.classes={VoxelWorld,Tank,WEAPONS,Game,SurfaceNavigator,EnemyPerception,ShellCamera,MOVE_RULES}',ctx,{timeout:15000});
 const {VoxelWorld,Tank,WEAPONS,Game,SurfaceNavigator,EnemyPerception,ShellCamera,MOVE_RULES}=ctx.classes;
@@ -71,4 +71,36 @@ for(const id of ['tankAimControls','aimUp','aimDown','aimLeft','aimRight'])asser
 assert.ok(rd('src/style.css').includes('#tankAimControls .aimArrow'),'Aim arrows must have styled on-tank hit areas');
 assert.ok(!rd('src/game.js').includes('this.predict().entries()'),'Old opaque ballistic dots must be removed');
 
-console.log('PASS — six single-action movements, prop collisions, falling trees, crater ejecta, enemy estimation, world-anchored health UI, camera, offline bundle.');
+
+const motor=Object.create(Game.prototype),secondWorld=new VoxelWorld(fake),motorTank=new Tank(-31,-15,secondWorld);
+Object.assign(motor,{
+ mode:'duel',turn:'player',paused:false,player:motorTank,enemy:new Tank(29,21,secondWorld,true),
+ world:secondWorld,projectiles:[],navigator:new SurfaceNavigator(secondWorld),
+ movementMax:8,movementRemaining:8,moveLeft:8,keys:{},joy:{x:0,y:1},orbit:0
+});
+motorTank._game=motor;
+const px=motorTank.x,pz=motorTank.z;
+motor.driveByJoystick(.12);
+const traveled=Math.hypot(motorTank.x-px,motorTank.z-pz);
+assert.ok(traveled>.2&&traveled<1.2,'Joystick should move tank a controlled distance');
+assert.ok(Math.abs((8-motor.movementRemaining)-traveled)<1e-4,'Meter drains by actual travel');
+motor.joy={x:1,y:0};
+const oldBudget=motor.movementRemaining,oldYaw=motorTank.yaw;
+motor.driveByJoystick(.2);
+assert.notEqual(motorTank.yaw,oldYaw,'Joystick horizontal steer rotates tank');
+assert.equal(motor.movementRemaining,oldBudget,'Turning without moving uses no meter');
+motor.movementRemaining=0;motor.joy={x:0,y:1};
+const halted=[motorTank.x,motorTank.z];
+motor.driveByJoystick(.2);
+assert.equal(motorTank.x,halted[0]);
+assert.equal(motorTank.z,halted[1]);
+motor.joy={x:0,y:0};motor.dom=id=>({value:'',textContent:'',style:{}});
+assert.equal(motor.setPowerExact(75),75);
+assert.equal(motor.setPowerExact(76),75);
+assert.equal(motor.setPowerExact(21),22);
+assert.equal(motor.setPowerExact(40.4),40);
+for(const id of ['joyBase','joyKnob','movementGauge','moveMeterFill','powerPlus','powerMinus','weaponToggle'])assert.ok(rd('src/shell.html').includes('id="'+id+'"'),'Missing compact HUD '+id);
+assert.ok(!rd('src/shell.html').includes('id="moveTokens"'),'Obsolete diamond movement tokens remain');
+assert.ok(rd('src/style.css').includes('#hud #bottom #weaponPanel .weaponToggle'),'Missing tiny shell picker style');
+console.log('PASS — per-turn joystick distance budget, steering, precision power, compact HUD, ballistic arc, destructible world and offline bundle.');
+
