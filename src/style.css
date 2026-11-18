@@ -143,3 +143,144 @@ h1 em{display:block;color:var(--gold);font-style:normal}
  #tankAimControls .aimUp,#tankAimControls .aimDown{left:57px}
  #tankAimControls .aimLeft,#tankAimControls .aimRight{top:56px}
 }
+
+/* v0.3.2 — deliberate minimal landscape HUD. Battlefield takes priority. */
+#hud .hudTop{justify-content:center;align-items:flex-start}
+#hud .hudTop .centerTop{
+ position:absolute;left:50%;top:0;transform:translateX(-50%);
+ padding:5px 10px;background:rgba(5,24,30,.25);
+ border-color:rgba(230,246,233,.12);backdrop-filter:blur(3px);
+ font-size:10px;border-radius:8px;
+}
+#hud .hudTop .centerTop small{font-size:8px;opacity:.75}
+#hud .hudTop .actionsTop{position:absolute;right:0;top:0}
+#hud .hudTop #pauseButton{
+ min-width:35px;min-height:34px;background:rgba(10,27,36,.52);
+ border-color:rgba(226,244,232,.17);border-radius:9px;font-size:18px;
+}
+#hud .movesPill,#hud #moveTokens,#hud #help{display:none!important}
+#hud #bottom{
+ position:absolute;bottom:max(10px,env(safe-area-inset-bottom));
+ left:max(8px,env(safe-area-inset-left));
+ right:max(10px,env(safe-area-inset-right));
+ height:178px;display:block;max-width:none;pointer-events:none;
+}
+#hud #bottom > *{pointer-events:auto}
+#hud #bottom .verticalPower{
+ position:absolute;left:0;bottom:0;top:auto;right:auto;
+ display:block;width:39px;height:177px;min-width:0;max-width:none;
+ padding:0;border:1px solid rgba(243,223,171,.29);
+ border-radius:12px;background:rgba(8,30,38,.58);
+ backdrop-filter:blur(9px);box-shadow:0 6px 16px rgba(0,0,0,.14);
+}
+#hud #bottom .verticalPower output{
+ position:absolute;top:33px;left:0;right:0;text-align:center;
+ font-size:10px;letter-spacing:-.03em;font-weight:900;color:#ffe4a9;
+}
+#hud #bottom .verticalPower input[type=range]{
+ position:absolute;top:94px;left:-34px;width:106px;height:22px;
+ margin:0;padding:0;transform:rotate(-90deg);
+ accent-color:#ffd07f;touch-action:none;cursor:pointer;
+}
+#hud #bottom .verticalPower .powerStep{
+ position:absolute;left:4px;width:29px;height:27px;min-height:0;
+ display:grid;place-items:center;border:1px solid rgba(255,222,144,.35);
+ border-radius:7px;background:rgba(51,70,66,.66);
+ color:#ffe7af;font-size:19px;font-weight:800;line-height:1;
+ touch-action:manipulation;pointer-events:auto;
+}
+#hud #bottom .verticalPower #powerPlus{top:3px}
+#hud #bottom .verticalPower #powerMinus{bottom:3px}
+#hud #bottom .verticalPower .powerStep:active{
+ background:rgba(255,203,113,.56);color:#142931;
+}
+#hud #bottom #weaponPanel{
+ position:absolute;right:91px;bottom:2px;left:auto;top:auto;
+ width:52px;max-width:none;min-width:0;height:52px;
+ flex:none;overflow:visible;background:transparent;
+}
+#hud #bottom #weaponPanel .weaponToggle{
+ position:relative;display:flex;justify-content:center;align-items:center;
+ padding:4px;width:52px;height:52px;min-height:52px;border-radius:11px;
+ gap:0;background:rgba(7,26,35,.72);
+ border-color:rgba(255,217,138,.34);
+ backdrop-filter:blur(10px);
+}
+#hud #bottom #weaponPanel .weaponToggle canvas{
+ width:43px;height:43px;flex:0 0 43px;background:transparent;border:0;
+}
+.visuallyHidden{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+#hud #bottom #weaponPanel .weaponChevron{
+ position:absolute;right:1px;bottom:0;line-height:11px;
+ font-size:12px;color:#ffe3ab;background:rgba(7,23,30,.7);
+ border-radius:4px;min-width:13px;text-align:center;
+}
+#hud #bottom #weaponPanel .weaponChoices{
+ position:absolute;bottom:calc(100% + 7px);top:auto;
+ left:auto;right:0;max-width:min(306px,calc(100vw - 24px));
+ width:260px;grid-template-columns:repeat(3,minmax(0,1fr));
+ background:rgba(7,25,31,.93);
+}
+#hud #bottom #fire{
+ position:absolute;right:0;bottom:0;
+ width:77px;min-width:77px;height:67px;
+ border-radius:14px;font-size:17px;
+ box-shadow:0 5px 18px rgba(0,0,0,.17);
+}
+#hud #joyBase{
+ display:none!important;position:absolute;
+ left:max(64px,calc(env(safe-area-inset-left) + 59px));
+ bottom:max(12px,env(safe-area-inset-bottom));
+ top:auto;right:auto;width:90px;height:90px;
+ border:1px solid rgba(222,247,226,.26);border-radius:50%;
+ background:rgba(9,34,42,.35);
+ backdrop-filter:blur(2px);
+ pointer-events:auto;touch-action:none;z-index:12;
+}
+#hud.canMove #joyBase{display:block!important}
+#hud #joyKnob{
+ position:absolute;width:38px;height:38px;left:25px;top:25px;
+ border-radius:50%;border:1px solid rgba(255,238,192,.79);
+ background:linear-gradient(160deg,rgba(243,208,139,.9),rgba(179,138,73,.75));
+ box-shadow:0 3px 11px rgba(0,0,0,.24);pointer-events:none;
+}
+#hud .joyCompass{position:absolute;inset:0;display:grid;place-items:center;
+ color:rgba(229,244,218,.18);font-size:43px;line-height:1;
+ pointer-events:none}
+#hud #movementGauge{
+ position:absolute;left:max(65px,calc(env(safe-area-inset-left) + 58px));
+ bottom:max(112px,calc(env(safe-area-inset-bottom) + 103px));
+ width:122px;height:15px;display:flex;align-items:center;gap:6px;
+ pointer-events:none;opacity:.50;transition:opacity .15s;
+}
+#hud.canMove #movementGauge{opacity:1}
+#hud .gaugeLabel{font-size:8px;font-weight:900;letter-spacing:.08em;
+ color:#e1eacb;text-shadow:0 1px 5px #061820}
+#hud .movementTrack{display:block;position:relative;flex:1;height:7px;
+ border:1px solid rgba(243,222,171,.46);
+ background:rgba(10,29,34,.55);border-radius:10px;overflow:hidden}
+#hud .movementFill{position:absolute;top:0;bottom:0;left:0;width:100%;
+ background:linear-gradient(90deg,#8fdcba,#f6d486);border-radius:8px;
+ transition:width 65ms linear}
+@media(max-width:720px){
+ #hud #bottom{height:153px;bottom:max(6px,env(safe-area-inset-bottom));}
+ #hud #bottom .verticalPower{height:151px;width:34px;border-radius:9px}
+ #hud #bottom .verticalPower .powerStep{left:3px;width:26px;height:24px;font-size:17px}
+ #hud #bottom .verticalPower output{top:30px;font-size:9px}
+ #hud #bottom .verticalPower input[type=range]{width:88px;top:79px;left:-28px;height:22px}
+ #hud #bottom #fire{width:68px;min-width:68px;height:61px;font-size:15px}
+ #hud #bottom #weaponPanel{right:75px;bottom:2px;width:45px;height:45px}
+ #hud #bottom #weaponPanel .weaponToggle{width:45px;height:45px;min-height:45px;padding:3px}
+ #hud #bottom #weaponPanel .weaponToggle canvas{width:39px;height:39px;flex-basis:39px}
+ #hud #bottom #weaponPanel .weaponChoices{width:220px;padding:6px;gap:5px}
+ #hud #joyBase{left:max(54px,calc(env(safe-area-inset-left) + 47px));bottom:10px;width:78px;height:78px}
+ #hud #joyKnob{left:22px;top:22px;width:32px;height:32px}
+ #hud #movementGauge{left:max(56px,calc(env(safe-area-inset-left) + 47px));bottom:96px;width:115px}
+}
+@media(max-height:370px){
+ #hud #bottom{bottom:4px;height:137px}
+ #hud #bottom .verticalPower{height:136px}
+ #hud #bottom .verticalPower input[type=range]{width:72px;top:72px;left:-20px}
+ #hud #movementGauge{bottom:88px}
+ #hud #joyBase{bottom:4px}
+}
