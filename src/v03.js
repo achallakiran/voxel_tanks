@@ -1,6 +1,6 @@
 'use strict';
 // v0.3: camera-to-barrel aiming, direct tank selection, discrete movement and impact staging.
-const V03_MAX_STEP=MOVE_RULES.unit;
+const V03_MAX_STEP=8; // AI-only navigation; player joystick handles movement.
 const V03_PLAN=SurfaceNavigator.prototype.plan;
 SurfaceNavigator.prototype.plan=function(tank,x,z){
  if(Math.hypot(x-tank.x,z-tank.z)>V03_MAX_STEP+1.25)return null;
@@ -97,22 +97,12 @@ Game.prototype.bind=function(){
   if(drift>10||this.mode!=='duel'||this.turn!=='player'||this.paused||this.movingPath)return;
   if(this.isPlayerTankTap(e.clientX,e.clientY)){
    this.tankSelected=!this.tankSelected;
-   if(this.tankSelected&&this.moveCredits>0)this.computeMovementHalo();
+   // Tank selection is for the four precise turret arrows.
    this.audio.select();
-   if(!this.tankSelected)this.movementHalo=[];
+   this.movementHalo=[];
    this.refreshMoveUi();return;
   }
-  if(!this.tankSelected)return;
-  if(this.moveCredits<=0){this.toast('NO MOVES LEFT');return;}
-  let hit=this.pickGround(e.clientX,e.clientY);
-  if(!hit){this.toast('NO VALID GROUND');return;}
-  let plan=this.navigator.plan(this.player,hit[0],hit[2]);
-  if(!plan){this.toast('TOO FAR OR BLOCKED');return;}
-  this.moveCredits--;this.moveLeft=this.moveCredits;
-  this.aimWorldHeading=this.player.aimYaw();
-  this.movingPath={points:plan.points,next:1};
-  this.tankSelected=false;this.movementHalo=[];
-  this.refreshMoveUi();this.audio.select();
+  // Ground taps do not drive; joystick movement is exclusive.
  });
 };
 Game.prototype.isPlayerTankTap=function(px,py){
@@ -129,15 +119,7 @@ Game.prototype.isPlayerTankTap=function(px,py){
  let miny=Math.min(...corners.map(c=>c[1]))-15,maxy=Math.max(...corners.map(c=>c[1]))+16;
  return px-rect.left>=minx&&px-rect.left<=maxx&&py-rect.top>=miny&&py-rect.top<=maxy;
 };
-Game.prototype.computeMovementHalo=function(){
- this.movementHalo=[];
- let t=this.player;
- for(let i=0;i<24;i++){
-  let a=i*Math.PI*2/24,x=t.x+Math.sin(a)*V03_MAX_STEP*.86,z=t.z+Math.cos(a)*V03_MAX_STEP*.86;
-  let plan=this.navigator.plan(t,x,z);
-  if(plan){let p=plan.points[plan.points.length-1];this.movementHalo.push([p[0],p[1]+.32,p[2]]);}
- }
-};
+Game.prototype.computeMovementHalo=function(){this.movementHalo=[];};
 // Camera drags must not change artillery aim. Precise on-tank arrows own the controls.
 Game.prototype.handleSceneDrag=function(){};
 const V03_START=Game.prototype.start;
@@ -148,7 +130,7 @@ Game.prototype.start=function(mode){
  if(this.dom('weaponPanel'))this.dom('weaponPanel').classList.remove('expanded');
  if(this.dom('weaponToggle'))this.dom('weaponToggle').setAttribute('aria-expanded','false');
  this.refreshMoveUi();this.pickWeapon(0);
- this.banner('TAP TANK TO AIM OR MOVE','FOUR ARROWS • SIX MOVES • PARTIAL FLIGHT ARC',2.5);
+ this.banner('DRIVE • AIM • FIRE','JOYSTICK TO DRIVE • TAP TANK FOR AIM ARROWS',2.4);
 };
 const V03_VOLLEY=Game.prototype.afterVolley;
 Game.prototype.afterVolley=function(){
@@ -168,7 +150,7 @@ const V03_MOVE_UI=Game.prototype.refreshMoveUi;
 Game.prototype.refreshMoveUi=function(){
  V03_MOVE_UI.call(this);
  let indicator=this.dom('moveTokens');
- if(indicator)indicator.innerHTML=Array.from({length:6},(_,i)=>'<span class="'+(i<(this.moveCredits??6)?'ready':'spent')+'"></span>').join('');
+ // No movement diamonds; distance is shown by the gauge.
  if(this.dom('moveControls'))this.dom('moveControls').style.display='none';
  if(this.dom('hud'))this.dom('hud').classList.toggle('selectedTank',!!this.tankSelected);
  if(this.dom('moveLeft'))this.dom('moveLeft').textContent=this.moveCredits??6;
@@ -247,14 +229,6 @@ Game.prototype.camera=function(){
 const V03_DRAW=Game.prototype.draw;
 Game.prototype.draw=function(now){
  V03_DRAW.call(this,now);
- if(this.mode==='duel'&&this.tankSelected&&this.turn==='player'&&!this.movingPath){
-  for(let p of this.movementHalo||[])this.r.cube(p,[.23,.09,.23],[.98,.78,.37]);
-  for(let i=0;i<24;i++){
-   let a=i*Math.PI*2/24,t=this.player;
-   let px=t.x+Math.cos(a)*2.9,pz=t.z+Math.sin(a)*2.9;
-   this.r.cube([px,t.y+.12,pz],[.18,.12,.18],[.96,.78,.31]);
-  }
- }
  for(let d of this.debrisCloud||[]){
   let a=clamp((d.life-d.time)/d.life,.1,1),size=d.size*(.8+.2*a);
   this.r.cube(d.pos,[size,size,size],d.color,null,a);
